@@ -18,4 +18,4 @@ class Reports(models.Model):
     audit_status = models.CharField(max_length=100,default=AuditStatus.APPROVAL)
     bill_transit = models.IntegerField(default=0)
     cost_mult = models.DecimalField(default = 0, decimal_places=4,max_digits =30)
-    sid = models.ForeignKey(Station,on_delete=models.CASCADE)
+    sid = models.ForeignKey(Station,related_name='stations',on_delete=models.CASCADE)

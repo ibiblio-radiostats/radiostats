@@ -8,7 +8,7 @@ import datetime
 class ReportsViewSet(viewsets.ModelViewSet):
     serializer_class = ReportsSerializer
     
-    
     def get_queryset(self):
-        queryset = Reports.objects.all() 
+        queryset = Reports.objects.all()
+
         return queryset    
