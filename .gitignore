@@ -1,0 +1,22 @@
+# Virtualenv
+/bin
+/lib
+/pyvenv.cfg
+
+# Django
+db.sqlite3
+*.log
+*.pot
+*.pyc
+__pycache__
+
+# Backup files
+*.bak
+
+# Python
+*.py[cod]
+*$py.class
+
+# Visual Studio Code
+.vscode
+.history
