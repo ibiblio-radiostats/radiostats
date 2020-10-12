@@ -17,7 +17,7 @@ class ReportsViewSet(viewsets.ModelViewSet):
             if audit_status is not None:
                 queryset = Reports.objects.filter(audit_status=audit_status) 
             elif order_by is not None: 
-                ###need way to dynamically sort by desc or asec
+                ###need way to dynamically sort by desc or asce
                 queryset = Reports.objects.all().order_by(order_by)
             return queryset    
 
