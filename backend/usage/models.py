@@ -6,6 +6,7 @@ class AuditStatus(models.TextChoices):
     PROCESSING = "PROCESSING",
     PROCESSED = "PROCESSED",
     APPROVAL = "APPROVAL",
+    UNUSABLE = 'UNUSABLE',
 
 
 class Station(models.Model):

@@ -14,11 +14,16 @@ class ReportsViewSet(viewsets.ModelViewSet):
             queryset = Reports.objects.all()
             audit_status = self.request.query_params.get("audit_status",None)
             order_by = self.request.query_params.get("order_by",None)
+            start_dt = self.request.query_params.get("start_dt",None)
+            end_dt = self.request.query_params.get("end_dt",None)
+
             if audit_status is not None:
                 queryset = Reports.objects.filter(audit_status=audit_status) 
-            elif order_by is not None: 
+            if start_dt is not None and end_dt is not None:
+                queryset = queryset.filter(bill_start__range=(start_dt,end_dt)) 
+            if order_by is not None: 
                 ###need way to dynamically sort by desc or asce
-                queryset = Reports.objects.all().order_by(order_by)
+                queryset = queryset.order_by(order_by)
             return queryset    
 
     def update(self,request, *args, **kwargs):

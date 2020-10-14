@@ -14,5 +14,6 @@ class ReportsSerializer(serializers.ModelSerializer):
             "audit_status",
             "bill_transit",
             "cost_mult",
+            "sid",
             "stations",
         )
