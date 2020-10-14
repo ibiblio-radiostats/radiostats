@@ -1,10 +1,10 @@
-from rest_framework import serializers 
-from backend.usage.models import Reports 
+from rest_framework import serializers
+from backend.usage.models import Reports
 from backend.usage.models import Station
 
 class ReportsSerializer(serializers.ModelSerializer):
     stations = serializers.CharField(source='sid.station_name',read_only=True)
-    class Meta: 
+    class Meta:
         model = Reports
         fields = (
             "id",
@@ -16,4 +16,12 @@ class ReportsSerializer(serializers.ModelSerializer):
             "cost_mult",
             "sid",
             "stations",
+        )
+
+class StationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Station
+        fields = (
+            "id",
+            "station_name",
         )

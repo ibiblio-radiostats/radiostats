@@ -17,11 +17,12 @@ from django.contrib import admin
 from django.conf.urls import url
 from django.urls import include, path
 from rest_framework import permissions, routers
-from backend.usage.views import ReportsViewSet
+from backend.usage.views import ReportsViewSet, StationViewSet
 from drf_yasg2.views import get_schema_view
 from drf_yasg2 import openapi
 
 router = routers.DefaultRouter()
+router.register("station", StationViewSet, basename="station")
 router.register("usage", ReportsViewSet, basename="usage")
 
 schema_view = get_schema_view(
