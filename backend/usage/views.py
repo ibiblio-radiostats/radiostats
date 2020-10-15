@@ -23,7 +23,10 @@ class ReportsViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(bill_start__range=(start_dt,end_dt))
             if order_by is not None:
                 ###need way to dynamically sort by desc or asce
-                queryset = queryset.order_by(order_by)
+                sign = order_by.split(':')[-1]
+                order_sign = '-' if sign == 'desc' else ''
+                order_name = order_by.split(':')[0]
+                queryset = queryset.order_by(order_sign + order_name)
             return queryset
 
     def update(self,request, *args, **kwargs):
