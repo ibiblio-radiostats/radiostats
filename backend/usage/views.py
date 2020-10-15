@@ -19,7 +19,8 @@ class ReportsViewSet(viewsets.ModelViewSet):
 
 
         if audit_status is not None:
-            queryset = Reports.objects.filter(audit_status=audit_status)
+            audit_list = audit_status.split(",")
+            queryset = Reports.objects.filter(audit_status__in=audit_list)
         if start_dt is not None and end_dt is not None:
             queryset = queryset.filter(bill_start__range=(start_dt,end_dt))
         if approval is not None:
