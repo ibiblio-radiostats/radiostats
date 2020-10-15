@@ -120,7 +120,7 @@ export default class Approvals extends React.Component {
                 // If a match is found, remove it.
                 if (newBills[j].stations === keys[i]) {
                     // Change status to UNUSABLE
-                    await axios.patch(`http://127.0.0.1:8000/api/usage/${newBills[j].id}/?status=${type}`);
+                    await axios.patch(`http://127.0.0.1:8000/api/usage/${newBills[j].id}/?status=${type}&approval=test`);
                     // Remove from state.
                     newBills.splice(j, 1);
                 }

@@ -7,10 +7,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import IconButton from '@material-ui/core/IconButton';
 import axios from 'axios'
-import Filter from '../../assets/Filter.png';
 import FilterModal from './FilterModal';
+import ArrowDropDownBtn from './ArrowDropDownBtn';
 import './Home.css';
 
 // Retrieving the month and year.
@@ -35,7 +34,8 @@ export default class Home extends React.Component {
         this.state = {
             bills: []
         };
-        this.openModal = this.openModal.bind(this);
+        this.applyFilter = this.applyFilter.bind(this);
+        this.sortCategory = this.sortCategory.bind(this);
     }
 
     async componentDidMount() {
@@ -54,10 +54,58 @@ export default class Home extends React.Component {
         })
     }
 
-    openModal(event) {
+    async sortCategory(category, sort) {
+        // var filteredBills = await axios.get(`http://127.0.0.1:8000/api/usage/?order_by=${category}:${sort}`);
+        // Adding new keys.
+        // for (var i = 0; i < filteredBills.data.length; i++) {
+        //     let date = new Date(filteredBills.data[i].bill_start);
+        //     filteredBills.data[i].month = monthNumToName[date.getMonth() + 1];
+        //     filteredBills.data[i].year = date.getFullYear();
+        // }
+        // console.log(filteredBills.data);
+
+        // // Setting the state to be the filtered bills.
+        // this.setState({
+        //     bills: filteredBills.data
+        // })
+    }
+
+    // Applies search filter.
+    async applyFilter(startDate, endDate, processing, processed) {
+        // Floor and ceiling the date.
+        startDate.setDate(1);
+        endDate.setDate(new Date(endDate.getFullYear(), endDate.getDate(), 0).getDate());
+
+        // Determining audit status.
+        var auditStatus=""
+        if (processing !== "" || processed !== "") {
+            auditStatus += "audit_status="
+            if (processing !== "" && processed !== "") {
+                auditStatus+=`${processed},${processing}`
+            } else if (processing !== "") {
+                auditStatus += processing;
+            } else if (processed !== "")  {
+                auditStatus += processed;
+            }
+            auditStatus += "&";
+        }
+        
+        // Retrieving the filtered bills.
+        var filteredBills = await axios.get(
+            `http://127.0.0.1:8000/api/usage/?${auditStatus}start_dt=${startDate.toISOString()}&end_dt=${endDate.toISOString()}`
+        );
+
+        // Adding new keys.
+        for (var i = 0; i < filteredBills.data.length; i++) {
+            let date = new Date(filteredBills.data[i].bill_start);
+            filteredBills.data[i].month = monthNumToName[date.getMonth() + 1];
+            filteredBills.data[i].year = date.getFullYear();
+        }
+
+        // Setting the state to be the filtered bills.
         this.setState({
-            openModal: true
-        });
+            bills: filteredBills.data
+        })
     }
 
     render() {
@@ -69,21 +117,38 @@ export default class Home extends React.Component {
                         <h2 style={{"marginLeft":"1%"}}> 
                             Monthly Usage Information 
                             <span className="filter">
-                                <IconButton style={{width: "80%", height: "40%"}} onClick={this.openModal}> <img src={Filter} alt="filter"/> </IconButton> 
+                                <FilterModal applyFilter={this.applyFilter}/>
                              </span>
-                             {/* <FilterModal open={this.state.openModal}/> */}
                         </h2>
                     </div>
                     <TableContainer component={Paper} key="homeTable">
                     <Table aria-label="simple table">
                     <TableHead>
                         <TableRow id="header">
-                            <TableCell>Radio Station </TableCell>
-                            <TableCell>Month</TableCell>
-                            <TableCell>Year</TableCell>
-                            <TableCell>Bandwidth Usage</TableCell>
-                            <TableCell>Cost</TableCell>
-                            <TableCell>Audit Status</TableCell>
+                            <TableCell>
+                                Radio Station 
+                                <ArrowDropDownBtn category={"stations"} sortCategory={this.sortCategory}/> 
+                            </TableCell>
+                            <TableCell>
+                                Month 
+                                <ArrowDropDownBtn category={"bill_start"} sortCategory={this.sortCategory}/> 
+                            </TableCell>
+                            <TableCell>
+                                Year
+                                <ArrowDropDownBtn category={"bill_start"} sortCategory={this.sortCategory}/> 
+                            </TableCell>
+                            <TableCell>
+                                Bandwidth Usage
+                                <ArrowDropDownBtn category={"bill_transit"} sortCategory={this.sortCategory}/> 
+                            </TableCell>
+                            <TableCell>
+                                Cost 
+                                <ArrowDropDownBtn category={"cost"} sortCategory={this.sortCategory}/> 
+                            </TableCell>
+                            <TableCell>
+                                Audit Status
+                                <ArrowDropDownBtn category={"audit_status"} sortCategory={this.sortCategory}/> 
+                            </TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
