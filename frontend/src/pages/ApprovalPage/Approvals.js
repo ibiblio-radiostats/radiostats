@@ -46,12 +46,12 @@ export default class Approvals extends React.Component {
     // Retrieves all bills when mounted.
     async componentDidMount() {
         // Axios call for bills.
-        const initBills = await axios.get('http://127.0.0.1:8000/api/usage/');
+        const initBills = await axios.get('http://127.0.0.1:8000/api/usage?approval=test');
         var initChecked = {};
         
         // Insert month and dates for ease.
         for (var i = 0; i < initBills.data.length; i++) {
-            let date = new Date(initBills.data[i].report_dtm);
+            let date = new Date(initBills.data[i].bill_start);
             initBills.data[i].month = monthNumToName[date.getMonth() + 1];
             initBills.data[i].year = date.getFullYear();
             initChecked[initBills.data[i].stations] = false;
@@ -116,27 +116,16 @@ export default class Approvals extends React.Component {
         var newBills = JSON.parse(JSON.stringify(this.state.bills));
         var keys = Object.keys(this.state.buttonsSelected);
         for (var i = 0; i < keys.length; i++) {
-            if (type === "approve") {
-                // Approve here.
-            } else if (type === "reject") {
-                // Reject here.
-            } else {
-                throw new Error("Bad bill type. Only approve and reject are allowed.");
-            }
-            
-            // Iterate and splice.
             for (var j = 0; j < newBills.length; j++) {
                 // If a match is found, remove it.
                 if (newBills[j].stations === keys[i]) {
-                    // Remove from the db.
-                    await axios.delete(`http://127.0.0.1:8000/api/usage/${newBills[j].id}`);
+                    // Change status to UNUSABLE
+                    await axios.patch(`http://127.0.0.1:8000/api/usage/${newBills[j].id}/?status=${type}`);
                     // Remove from state.
                     newBills.splice(j, 1);
                 }
             }
         }
-
-
         this.setState({
             bills: newBills
         });
@@ -148,7 +137,7 @@ export default class Approvals extends React.Component {
             variant="contained"
             id="approveButton"
             disabled={!Object.keys(this.state.buttonsSelected).length}
-            onClick={(e) => this.handleBill("approve", e)}> 
+            onClick={(e) => this.handleBill("PROCESSED", e)}> 
             Approve 
         </Button>
 
@@ -159,7 +148,7 @@ export default class Approvals extends React.Component {
             variant="contained"
             id="rejectButton"
             disabled={!Object.keys(this.state.buttonsSelected).length}
-            onClick={(e) => this.handleBill("reject", e)}>
+            onClick={(e) => this.handleBill("UNUSABLE", e)}>
             Reject
         </Button>
 

@@ -44,7 +44,7 @@ export default class Home extends React.Component {
 
         // Insert month and dates for ease.
         for (var i = 0; i < initBills.data.length; i++) {
-            let date = new Date(initBills.data[i].report_dtm);
+            let date = new Date(initBills.data[i].bill_start);
             initBills.data[i].month = monthNumToName[date.getMonth() + 1];
             initBills.data[i].year = date.getFullYear();
         }
@@ -55,7 +55,6 @@ export default class Home extends React.Component {
     }
 
     openModal(event) {
-        // console.log(event.target);
         this.setState({
             openModal: true
         });
@@ -64,7 +63,6 @@ export default class Home extends React.Component {
     render() {
         return (
             <div className="approvalPage">
-                {/* <FilterModal open={this.state.openModal}/> */}
                 <Header />
                 <div className="approvalContainer">
                     <div id = "topBar">
@@ -73,6 +71,7 @@ export default class Home extends React.Component {
                             <span className="filter">
                                 <IconButton style={{width: "80%", height: "40%"}} onClick={this.openModal}> <img src={Filter} alt="filter"/> </IconButton> 
                              </span>
+                             {/* <FilterModal open={this.state.openModal}/> */}
                         </h2>
                     </div>
                     <TableContainer component={Paper} key="homeTable">
