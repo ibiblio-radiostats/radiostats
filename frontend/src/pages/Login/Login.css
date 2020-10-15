@@ -1,0 +1,47 @@
+.loginFormContainer {
+    margin: auto;
+    padding-top: 2rem;
+    width: 35%;
+    height: 80%
+}
+
+.title {
+    text-align: center;
+    font-family: "Roboto";
+}
+
+.subtitle {
+    font-size: 1.75rem;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.loginFormFieldContainer {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.loginFormField {
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    position: relative;
+}
+
+.buttonContainer {
+    padding-top: 1rem;
+}
+
+.loginBtn {
+    position: relative;
+    color: #5B92E4;
+    width: 48%;
+    height: 3.5rem;
+}
+
+.forgotPasswordBtn {
+    position: relative;
+    color: #555555;
+    left: 4%;
+    width: 48%;
+    height: 3.5rem;
+}
