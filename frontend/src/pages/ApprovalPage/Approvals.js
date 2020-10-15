@@ -12,18 +12,30 @@ import Button from '@material-ui/core/Button';
 import ApprovalBill from './ApprovalBill';
 import axios from 'axios';
 import './Approval.css';
-  
+
 // TODO: Change rows to be an object and delete the key when approved/deleted - avoids O(N) operation.
-const rows = [
-    { radioStation: 'WCPE', month: 'September', year: '2020', bandwidthUsage: "20 bytes",   cost: "$63.29"},
-    { radioStation: 'WNCW', month: 'September', year: '2020', bandwidthUsage: "38.6 bytes", cost: "$46.17" },
-    { radioStation: 'WXYC', month: 'October'  , year: '2020', bandwidthUsage: "20 bytes",   cost: "$32.12" },
-];
+
+// Retrieving the month and year.
+const monthNumToName = {
+    1: "January",
+    2: "February",
+    3: "March",
+    4: "April",
+    5: "May",
+    6: "June",
+    7: "July",
+    8: "August",
+    9: "September",
+    10: "October",
+    11: "November",
+    12: "December"
+}
+
 export default class Approvals extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            approvals: [],
+            bills: [],
             checked: {},
             buttonsSelected: {}
         };
@@ -32,19 +44,22 @@ export default class Approvals extends React.Component {
         this.handleBill = this.handleBill.bind(this);
     }
     // Retrieves all bills when mounted.
-    componentDidMount() {
-        // Axios call for reports.
-
-        // Call to retrieve.
-        let initApprovals = rows;
-        let initChecked = {};
-        for (var i = 0; i < rows.length; i++) {
-            // Populating checked.
-            initChecked[rows[i].radioStation] = false;
+    async componentDidMount() {
+        // Axios call for bills.
+        const initBills = await axios.get('http://127.0.0.1:8000/api/usage/');
+        var initChecked = {};
+        
+        // Insert month and dates for ease.
+        for (var i = 0; i < initBills.data.length; i++) {
+            let date = new Date(initBills.data[i].report_dtm);
+            initBills.data[i].month = monthNumToName[date.getMonth() + 1];
+            initBills.data[i].year = date.getFullYear();
+            initChecked[initBills.data[i].stations] = false;
         }
+
         // Setting state.
         this.setState({
-            approvals: initApprovals,
+            bills: initBills.data,
             checked: initChecked,
         })
     }
@@ -54,8 +69,10 @@ export default class Approvals extends React.Component {
         // Creating a deep copy of [checked] and change the key [radioStationName]'s value.
         var newChecked = JSON.parse(JSON.stringify(this.state.checked));
         newChecked[radioStationName] = event.target.checked;
+
         // Creating a deep copy of [buttonsSelected].
         var newButtonsSelected = JSON.parse(JSON.stringify(this.state.buttonsSelected));
+        
         // If the number of buttons selected is 0, hide the buttons.
         if (event.target.checked) {
             newButtonsSelected[radioStationName] = 1;
@@ -95,8 +112,8 @@ export default class Approvals extends React.Component {
     }
 
     // Handles bill approval/rejection.
-    handleBill(type, event) {
-        var newApprovals = JSON.parse(JSON.stringify(this.state.approvals));
+    async handleBill(type, event) {
+        var newBills = JSON.parse(JSON.stringify(this.state.bills));
         var keys = Object.keys(this.state.buttonsSelected);
         for (var i = 0; i < keys.length; i++) {
             if (type === "approve") {
@@ -108,13 +125,20 @@ export default class Approvals extends React.Component {
             }
             
             // Iterate and splice.
-            for (var j = 0; j < newApprovals.length; j++) {
-                console.log(newApprovals[j])
-                if (newApprovals[j].radioStation === keys[i]) newApprovals.splice(j, 1);
+            for (var j = 0; j < newBills.length; j++) {
+                // If a match is found, remove it.
+                if (newBills[j].stations === keys[i]) {
+                    // Remove from the db.
+                    await axios.delete(`http://127.0.0.1:8000/api/usage/${newBills[j].id}`);
+                    // Remove from state.
+                    newBills.splice(j, 1);
+                }
             }
         }
+
+
         this.setState({
-            approvals: newApprovals
+            bills: newBills
         });
     }
     render() {
@@ -127,6 +151,7 @@ export default class Approvals extends React.Component {
             onClick={(e) => this.handleBill("approve", e)}> 
             Approve 
         </Button>
+
         // Reject button.
         let rejectButton = 
         <Button
@@ -137,6 +162,7 @@ export default class Approvals extends React.Component {
             onClick={(e) => this.handleBill("reject", e)}>
             Reject
         </Button>
+
         return (
             <div className="approvalPage">
                 <Header />
@@ -162,16 +188,16 @@ export default class Approvals extends React.Component {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {this.state.approvals.map((row) => (
+                                {this.state.bills.map((bill) => (
                                     <ApprovalBill
-                                        key={row.radioStation}
-                                        radioStation={row.radioStation}
-                                        month={row.month}
-                                        year={row.year}
-                                        bandwidthUsage={row.bandwidthUsage}
-                                        cost={row.cost}
+                                        key={bill.stations}
+                                        radioStation={bill.stations}
+                                        month={bill.month}
+                                        year={bill.year}
+                                        bandwidthUsage={bill.bill_transit}
+                                        cost={`$${(bill.bill_transit * bill.cost_mult).toFixed(2)}`}
                                         handleCheckBoxChange={this.handleCheckBoxChange}
-                                        checked={this.state.checked[row.radioStation]}
+                                        checked={this.state.checked[bill.stations]}
                                     />
                                 ))}
                             </TableBody>

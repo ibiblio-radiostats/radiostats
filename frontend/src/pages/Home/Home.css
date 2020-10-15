@@ -14,7 +14,8 @@
 }
 
 #topBar {
-    align-items : center;
+    /* display: inline-block; */
+    align-items: center;
     vertical-align: middle;
     background: #EBEBEB;
     border: 1px solid #C4C4C4;
@@ -78,10 +79,7 @@
     font-weight: bold;
 }
 
-#rejectButton {
-
-}
-
-#approveButton {
-    /* background-color: #62BF60; */
+.filter {
+    position: relative;
+    float: right;
 }
