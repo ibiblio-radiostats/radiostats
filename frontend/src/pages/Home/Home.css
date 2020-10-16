@@ -2,14 +2,22 @@
     height: 100%;
 }
 
-.approvalContainer {
+#approvalContainer {
     margin: auto;
     width: 95%;
-    height: 80vh;
+    max-height: 80vh;
     background: #FFFFFF;
     border: 1px solid #C4C4C4;
     box-sizing: border-box;
-    border-radius: 5px;
+    border-radius: 0px 0px 5px 5px;
+}
+
+#approvalHeader {
+    margin: auto;
+    width: 95%;
+    background: #FFFFFF;
+    box-sizing: border-box;
+    border-radius: 5px 5px 0px 0px;
     margin-top: 3%;
 }
 

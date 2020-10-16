@@ -69,13 +69,12 @@ export default class Login extends React.Component {
                 </div>
 
                 <div className="buttonContainer">
-
                     <Link to="/home" style={navStyle}>
                         <Button variant="contained" color="primary" className="loginBtn">
                             Login
                         </Button>
                     </Link>
-                    <Link style={navStyle}>
+                    <Link to="" style={navStyle}>
                         <Button variant="contained" color="default" className="forgotPasswordBtn">
                             Forgot Password
                         </Button>

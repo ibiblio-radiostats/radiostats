@@ -17,7 +17,6 @@ import {
 } from "react-router-dom";
 
 ReactDOM.render(
-  <React.StrictMode>
     <Router>
       <Switch>
         <Route path="/" exact component={Login} />
@@ -26,8 +25,7 @@ ReactDOM.render(
         <Route path="/approvals" component={Approvals} />
         <Route path="/profile" component={Profile} />
       </Switch>
-    </Router>
-  </React.StrictMode>,
+    </Router>,
   document.getElementById('root')
 );
 

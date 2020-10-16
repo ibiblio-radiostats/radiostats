@@ -1,7 +1,6 @@
 import 'date-fns';
 import React from 'react';
 import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import IconButton from '@material-ui/core/IconButton';
 import Filter from '../../assets/Filter.png';
@@ -78,10 +77,6 @@ export default function FilterModal({applyFilter}) {
                 open={open}
                 onClose={handleClose}
                 closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                timeout: 500,
-                }}
             >
             <Fade in={open}>
                 <div className={classes.paper}>
