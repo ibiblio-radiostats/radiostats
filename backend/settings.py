@@ -29,6 +29,8 @@ CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000']
 
 ALLOWED_HOSTS = []
 
+SITE_ID = 1
+
 
 # Application definition
 
@@ -39,11 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'django.contrib.sites',
     'corsheaders',
     'drf_yasg2',
     'rest_framework',
-
+    "rest_auth",
+    'rest_auth.registration',
+    "rest_framework.authtoken",
+    "allauth",
     'backend.usage',
     'backend.users',
 ]
@@ -58,6 +63,25 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# DJANGO REST FRAMEWORK
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication"
+    ],
+}
+
+
+# drf_yasg / Swagger UI / Redoc token auth
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Token": {"type": "apiKey", "name": "Authorization", "in": "header"}
+    }
+}
+
+
+
 
 ROOT_URLCONF = 'backend.urls'
 

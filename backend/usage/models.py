@@ -12,7 +12,7 @@ class AuditStatus(models.TextChoices):
 class Station(models.Model):
     station_name = models.CharField(max_length=100)
 
-class Reports(models.Model):
+class Report(models.Model):
     report_dtm = models.DateTimeField(null=True,blank=True)
     bill_start = models.DateTimeField(null=True,blank=True)
     bill_end = models.DateTimeField(null=True,blank=True)
