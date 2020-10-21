@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from backend.usage.models import Reports
+from backend.usage.models import Report
 from backend.usage.models import Station
 
-class ReportsSerializer(serializers.ModelSerializer):
+class ReportSerializer(serializers.ModelSerializer):
     stations = serializers.CharField(source='sid.station_name',read_only=True)
     class Meta:
-        model = Reports
+        model = Report
         fields = (
             "id",
             "report_dtm",
