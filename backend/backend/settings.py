@@ -17,7 +17,11 @@ import backend.config_reader
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-backend.config_reader.read(BASE_DIR.parent / "config.yml", BASE_DIR)
+CONFIG_PATH = os.environ['CONFIG_PATH']
+if not CONFIG_PATH:
+    CONFIG_PATH = BASE_DIR.parent / "config.yml"
+
+backend.config_reader.read(CONFIG_PATH, BASE_DIR)
 
 from backend.config_reader import (
     SECRET_KEY,
