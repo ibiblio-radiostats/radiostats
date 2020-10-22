@@ -10,7 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import FilterModal from './FilterModal';
 import ArrowDropDownBtn from './ArrowDropDownBtn';
 import TablePagination from '@material-ui/core/TablePagination';
-import { sortCost, sortMonth, sortYear } from './Sort';
+import { sortCost, sortMonth, sortYear, sortStations } from './Sort';
 import axios from 'axios'
 import './Home.css';
 
@@ -24,9 +24,18 @@ export default class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            bills: {},
+            bills: [],
             page: 0,
-            rowsPerPage: 7
+            rowsPerPage: 7,
+            categorySelected: {
+                "stations": "desc",
+                "month": "desc",
+                "year": "desc",
+                "bill_transit": "desc",
+                "cost" : "desc",
+                "audit_status": "desc"
+            },
+            previousCategory: ""
         };
         this.applyFilter = this.applyFilter.bind(this);
         this.sortCategory = this.sortCategory.bind(this);
@@ -37,59 +46,62 @@ export default class Home extends React.Component {
     async componentDidMount() {
         // Axios call for bills.
         const response = await axios.get('http://127.0.0.1:8000/api/usage/');
-        var initBills = {};
 
-        // Insert month and dates for ease.
+        // Iterating and inserting new keys.
         for (var i = 0; i < response.data.length; i++) {
             // Adding new keys [month], [year], and [cost] to the data.
-            let date = new Date(response.data[i].bill_start);
+            var date = new Date(response.data[i].bill_start);
             response.data[i].month = monthNumToName[date.getMonth()];
             response.data[i].year = date.getFullYear();
             response.data[i].cost = (response.data[i].bill_transit * response.data[i].cost_mult).toFixed(2)
-
-            // Inserting keys [id] for [initBills].
-            initBills[response.data[i].id] = response.data[i];
         }
+
         // Setting new state.
         this.setState({
-            bills: initBills
+            bills: response.data
         })
     }
 
     // Individual sorts on categories.
     async sortCategory(category, sort) {
-        var filteredBills = {};
+        // Variables for the updated state.
         var sortedBills = [];
+        var updatedCategory = JSON.parse(JSON.stringify(this.state.categorySelected));
+        updatedCategory[this.state.previousCategory] = "desc";
+        updatedCategory[category] = sort;
+
+        // Determining which category to sort on.
         switch(category) {
+            case "stations":
+                sortedBills = sortStations(this.state.bills, sort);
+                break;
             case "month":
-                sortedBills = (sortMonth(Object.values(this.state.bills), sort));
+                sortedBills = sortMonth(this.state.bills, sort);
                 break;
             case "year":
-                sortedBills = (sortYear(Object.values(this.state.bills), sort));
+                sortedBills = sortYear(this.state.bills, sort);
                 break;
             case "cost":
-                filteredBills = (sortCost(Object.values(this.state.bills), sort));
+                sortedBills = sortCost(this.state.bills, sort);
                 break;
-            case "stations":
-                break;
-            default: 
+            default:
                 var response = await axios.get(`http://127.0.0.1:8000/api/usage/?order_by=${category}:${sort}`);
                 // Adding new keys [month], [year], and [cost] to the data.
                 for (var i = 0; i < response.data.length; i++) {
-                    let date = new Date(response.data[i].bill_start);
+                    var date = new Date(response.data[i].bill_start);
                     response.data[i].month = monthNumToName[date.getMonth()];
                     response.data[i].year = date.getFullYear();
                     response.data[i].cost = (response.data[i].bill_transit * response.data[i].cost_mult).toFixed(2)
-
-                    // Inserting keys [id] for [filteredBills].
-                    filteredBills[response.data[i].id] = response.data[i];
                 }
-                // Setting the state to be the filtered bills.
-                console.log(response.data);
-                this.setState({
-                    bills: response.data
-                })
-        }
+                sortedBills = response.data;
+            }
+
+        // Setting the state to be the sorted bills.
+        this.setState({
+            bills: sortedBills,
+            categorySelected: updatedCategory,
+            previousCategory: category
+        })
     }
 
     // Applies search filter.
@@ -115,24 +127,20 @@ export default class Home extends React.Component {
         // Retrieving the filtered bills.
         var response = await axios.get(
             `http://127.0.0.1:8000/api/usage/?${auditStatus}start_dt=${startDate.toISOString()}&end_dt=${endDate.toISOString()}`
-            );
+        );
         
-        var initBills = {}
         // Adding new keys.
         for (var i = 0; i < response.data.length; i++) {
             // Adding new keys [month], [year], and [cost] to the data.
-            let date = new Date(response.data[i].bill_start);
+            var date = new Date(response.data[i].bill_start);
             response.data[i].month = monthNumToName[date.getMonth()];
             response.data[i].year = date.getFullYear();
             response.data[i].cost = (response.data[i].bill_transit * response.data[i].cost_mult).toFixed(2)
-
-            // Inserting keys [id] for [initBills].
-            initBills[response.data[i].id] = response.data[i];
         }
 
         // Setting the state to be the filtered bills.
         this.setState({
-            bills: initBills
+            bills: response.data
         })
     }
 
@@ -152,9 +160,9 @@ export default class Home extends React.Component {
 
     render() {
         return (
-            <div className="approvalPage">
+            <div className="homePage">
                 <Header />  
-                <div id="approvalHeader">
+                <div id="tableHeader">
                     <div id = "topBar">
                         <h2 style={{"marginLeft":"1%"}}> 
                             Monthly Usage Information 
@@ -164,38 +172,38 @@ export default class Home extends React.Component {
                         </h2>
                     </div>
                 </div>
-                <TableContainer component={Paper} key="homeTable" id="approvalContainer">
+                <TableContainer component={Paper} key="homeTable" id="tableContainer">
                 <Table aria-label="simple table">
                 <TableHead>
                     <TableRow id="header">
                         <TableCell>
                             Radio Station 
-                            <ArrowDropDownBtn category={"stations"} sortCategory={this.sortCategory}/> 
+                            <ArrowDropDownBtn category={"stations"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["stations"]}/> 
                         </TableCell>
                         <TableCell>
                             Month 
-                            <ArrowDropDownBtn category={"month"} sortCategory={this.sortCategory}/> 
+                            <ArrowDropDownBtn category={"month"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["month"]}/> 
                         </TableCell>
                         <TableCell>
                             Year
-                            <ArrowDropDownBtn category={"year"} sortCategory={this.sortCategory}/> 
+                            <ArrowDropDownBtn category={"year"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["year"]}/> 
                         </TableCell>
                         <TableCell>
                             Bandwidth Usage
-                            <ArrowDropDownBtn category={"bill_transit"} sortCategory={this.sortCategory}/> 
+                            <ArrowDropDownBtn category={"bill_transit"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["bill_transit"]}/> 
                         </TableCell>
                         <TableCell>
                             Cost 
-                            <ArrowDropDownBtn category={"cost"} sortCategory={this.sortCategory}/> 
+                            <ArrowDropDownBtn category={"cost"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["cost"]}/> 
                         </TableCell>
                         <TableCell>
                             Audit Status
-                            <ArrowDropDownBtn category={"audit_status"} sortCategory={this.sortCategory}/> 
+                            <ArrowDropDownBtn category={"audit_status"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["audit_status"]}/> 
                         </TableCell>
                     </TableRow>
                     </TableHead>
                     <TableBody>
-                    {Object.values(this.state.bills)
+                    {this.state.bills
                     .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
                     .map((bill) => (
                             <TableRow key={bill.id}>

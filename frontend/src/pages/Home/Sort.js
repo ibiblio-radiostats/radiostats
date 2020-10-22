@@ -12,7 +12,7 @@ export function sortCost(array, sort) {
     } else {
         sortedArr = array.sort((a, b) => (b.cost - a.cost));
     }
-    return convertArrayToObject(sortedArr);
+    return sortedArr;
 }
 
 // Sorts months.
@@ -23,7 +23,7 @@ export function sortMonth(array, sort) {
     } else {
         sortedArr = array.sort((a, b) => (monthNameToNum[b.month] - monthNameToNum[a.month]));
     }
-    return convertArrayToObject(sortedArr);
+    return sortedArr;
 }
 
 // Sorts year.
@@ -34,14 +34,36 @@ export function sortYear(array, sort) {
     } else {
         sortedArr = array.sort((a, b) => (b.year - a.year));
     }
-    return convertArrayToObject(sortedArr);
+    return sortedArr;
 }
 
-// Converts an array into an object.
-const convertArrayToObject = (arr) => {
-    var newObj = new Map();
-    for (var i = 0; i < arr.length; i++) {
-        newObj.set([arr[i].id], arr[i]);
+// Sorts stations.
+export function sortStations(array, sort) {
+    var sortedArr = [];
+    if (sort === "asc") {;
+        sortedArr = array.sort(function(a, b) {
+            var nameA = a.stations.toUpperCase();
+            var nameB = b.stations.toUpperCase();
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+            return 0;
+          });
+    } else {
+        sortedArr = array.sort(function(a, b) {
+            var nameA = a.stations.toUpperCase();
+            var nameB = b.stations.toUpperCase();
+            if (nameA > nameB) {
+              return -1;
+            }
+            if (nameA < nameB) {
+              return 1;
+            }
+            return 0;
+          });
     }
-    return newObj.values();
-};
+    return sortedArr;
+}

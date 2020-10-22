@@ -1,8 +1,8 @@
-.homePage {
+.approvalPage {
     height: 100%;
 }
 
-#tableContainer {
+.tableContainer {
     margin: auto;
     width: 95%;
     max-height: 80vh;
@@ -10,32 +10,18 @@
     border: 1px solid #C4C4C4;
     box-sizing: border-box;
     border-radius: 0px 0px 5px 5px;
-}
-
-#tableHeader {
-    margin: auto;
-    width: 95%;
-    background: #FFFFFF;
-    box-sizing: border-box;
-    border-radius: 5px 5px 0px 0px;
     margin-top: 3%;
 }
 
 #topBar {
-    align-items: center;
+    align-items : center;
     vertical-align: middle;
     background: #EBEBEB;
     border: 1px solid #C4C4C4;
     box-sizing: border-box;
     border-radius: 5px 5px 0px 0px;
-    z-index: -1;
 }
 
 #header {
     font-weight: bold;
-}
-
-.filter {
-    position: relative;
-    float: right;
 }

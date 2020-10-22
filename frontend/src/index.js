@@ -1,31 +1,11 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
+import React from 'react';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-
-// Page imports.
-import Login from './pages/Login/Login';
-import Approvals from './pages/ApprovalPage/Approvals';
-import Home from './pages//Home/Home';
-import Profile from'./pages/Profile/Profile';
-
-// React router imports.
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-} from "react-router-dom";
+import App from './App';
 
 ReactDOM.render(
-    <Router>
-      <Switch>
-        <Route path="/" exact component={Login} />
-        <Route path="/login" component={Login} />
-        <Route path="/home" component={Home} />
-        <Route path="/approvals" component={Approvals} />
-        <Route path="/profile" component={Profile} />
-      </Switch>
-    </Router>,
+    <App/>,
   document.getElementById('root')
 );
 

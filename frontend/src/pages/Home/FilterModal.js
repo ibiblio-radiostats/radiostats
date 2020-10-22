@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 export default function FilterModal({applyFilter}) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [startDate, setStartDate] = React.useState(new Date());
+  const [startDate, setStartDate] = React.useState(new Date(new Date().setFullYear(new Date().getFullYear() - 1)));
   const [endDate, setEndDate] = React.useState(new Date());
   const [processing, setProcessing] = React.useState("PROCESSING");
   const [processed, setProcessed] = React.useState("PROCESSED");
@@ -81,7 +81,7 @@ export default function FilterModal({applyFilter}) {
             <Fade in={open}>
                 <div className={classes.paper}>
                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <Grid container justify="space-around">
+                        <Grid container justify="space-around" direction="row">
                             <KeyboardDatePicker
                                 disableToolbar
                                 variant="inline"
@@ -108,9 +108,13 @@ export default function FilterModal({applyFilter}) {
                                      'aria-label': 'change date',
                                  }}
                             />
-                            <div> <Checkbox color="primary" checked={processing !== ""}onChange={handleProcessing} value="PROCESSING"/> Processing </div>
-                            <div> <Checkbox color="primary" checked={processed !== ""}onChange={handleProcessed} value="PROCESSED"/> Processed </div>
-                            <div> <Button onClick={handleFilter}> Apply </Button> </div>
+                        </Grid>
+                        <Grid container justify="space-around" direction="row">
+                            <span> <Checkbox color="primary" checked={processing !== ""} onChange={handleProcessing} value="PROCESSING"/> Processing </span>
+                            <span> <Checkbox color="primary" checked={processed  !== ""}onChange={handleProcessed} value="PROCESSED"/> Processed </span>
+                        </Grid>
+                        <Grid container justify="space-around" direction="row">
+                            <Button onClick={handleFilter}> Apply </Button>
                         </Grid>
                     </MuiPickersUtilsProvider>
                 </div>

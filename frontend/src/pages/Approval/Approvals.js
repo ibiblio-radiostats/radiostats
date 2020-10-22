@@ -30,6 +30,7 @@ export default class Approvals extends React.Component {
         this.handleCheckAll = this.handleCheckAll.bind(this);
         this.handleBill = this.handleBill.bind(this);
     }
+
     // Retrieves all bills when mounted.
     async componentDidMount() {
         // Axios call for inital bills.
@@ -39,7 +40,7 @@ export default class Approvals extends React.Component {
         
         // Iterating through the response.
         for (var i = 0; i < response.data.length; i++) {
-            // Adding new keys [month], [year], and [cost] to the data.
+            // Adding new keys [month], [year], [cost], and [color] to the data.
             let date = new Date(response.data[i].bill_start);
             response.data[i].month = monthNumToName[date.getMonth()];
             response.data[i].year = date.getFullYear();
@@ -84,6 +85,7 @@ export default class Approvals extends React.Component {
             })
         }
     }
+
     // Called once the 'check-all' checkbox has been checked.
     handleCheckAll(event) {
         // New state variable for [checked].
@@ -95,7 +97,7 @@ export default class Approvals extends React.Component {
         ));
 
         // Set new state.
-        if (event.target.checked) {
+        if (event.target.checked && Object.keys(this.state.bills).length) {
             this.setState({
                 billsSelected: this.state.checked,
                 checked: newChecked
@@ -112,21 +114,25 @@ export default class Approvals extends React.Component {
     async handleBill(type, event) {
         // New bills.
         var newBills = JSON.parse(JSON.stringify(this.state.bills));
+        var newChecked = JSON.parse(JSON.stringify(this.state.checked));
 
         // Iterating through the bills and approving/rejecting those who are selected.
         var keys = Object.keys(this.state.billsSelected);
         for (var i = 0; i < keys.length; i++) {
-            // Id of the bills.
+            // Change [id]'s status to the type given.
             var id = keys[i];
-            // Change status to the type given.
+            
+            // Changing the bill's type and its render effects.
             await axios.patch(`http://127.0.0.1:8000/api/usage/${id}/?status=${type}&approval=test`);
-            // Remove from state.
-            delete newBills[id];
+            type === "UNUSABLE" ? newBills[id].audit_status = "UNUSABLE" : delete newBills[id];
+            newChecked[id] = false;
         }
 
         // Setting state to be the new bills list post-approval/rejection.
         this.setState({
-            bills: newBills
+            bills: newBills,
+            billsSelected: {},
+            checked: newChecked
         });
     }
 
@@ -156,7 +162,7 @@ export default class Approvals extends React.Component {
         return (
             <div className="approvalPage">
                 <Header />
-                <div className="approvalContainer">
+                <div className="tableContainer">
                     <TableContainer component={Paper}>
                         <Table aria-label="simple table">
                             <TableHead id="topBar">
@@ -181,7 +187,7 @@ export default class Approvals extends React.Component {
                             </TableHead>
                             <TableBody>
                                 {Object.values(this.state.bills).map((bill) => (
-                                    <TableRow key={bill.id}>
+                                    <TableRow key={bill.id} style={{"backgroundColor": bill.audit_status === "UNUSABLE" ? "rgb(255,219,233)" : ""}}>
                                         <TableCell padding="checkbox" align="justify">
                                             <Checkbox
                                             color="default"
