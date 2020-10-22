@@ -45,7 +45,11 @@ export default class Home extends React.Component {
 
     async componentDidMount() {
         // Axios call for bills.
-        const response = await axios.get('http://127.0.0.1:8000/api/usage/');
+        const response = await axios.get('http://127.0.0.1:8000/api/usage/', {
+            headers: {
+                Authorization: `Token ${this.props.user}` 
+            }
+        });
 
         // Iterating and inserting new keys.
         for (var i = 0; i < response.data.length; i++) {
@@ -85,7 +89,11 @@ export default class Home extends React.Component {
                 sortedBills = sortCost(this.state.bills, sort);
                 break;
             default:
-                var response = await axios.get(`http://127.0.0.1:8000/api/usage/?order_by=${category}:${sort}`);
+                var response = await axios.get(`http://127.0.0.1:8000/api/usage/?order_by=${category}:${sort}`, {
+                    headers: {
+                        Authorization: `Token ${this.props.user}` 
+                    }
+                })
                 // Adding new keys [month], [year], and [cost] to the data.
                 for (var i = 0; i < response.data.length; i++) {
                     var date = new Date(response.data[i].bill_start);
@@ -126,8 +134,11 @@ export default class Home extends React.Component {
 
         // Retrieving the filtered bills.
         var response = await axios.get(
-            `http://127.0.0.1:8000/api/usage/?${auditStatus}start_dt=${startDate.toISOString()}&end_dt=${endDate.toISOString()}`
-        );
+            `http://127.0.0.1:8000/api/usage/?${auditStatus}start_dt=${startDate.toISOString()}&end_dt=${endDate.toISOString()}`, {
+            headers: {
+                Authorization: `Token ${this.props.user}` 
+            }
+        });
         
         // Adding new keys.
         for (var i = 0; i < response.data.length; i++) {
@@ -161,7 +172,7 @@ export default class Home extends React.Component {
     render() {
         return (
             <div className="homePage">
-                <Header />  
+                <Header user={this.props.user}/>
                 <div id="tableHeader">
                     <div id = "topBar">
                         <h2 style={{"marginLeft":"1%"}}> 

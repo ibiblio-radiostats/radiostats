@@ -34,7 +34,12 @@ export default class Approvals extends React.Component {
     // Retrieves all bills when mounted.
     async componentDidMount() {
         // Axios call for inital bills.
-        const response = await axios.get('http://127.0.0.1:8000/api/usage?approval=test');
+        const response = await axios.get('http://127.0.0.1:8000/api/usage?approval=test', {
+            headers: {
+                Authorization: `Token ${this.props.user}`
+            } 
+        });
+
         var initChecked = {};
         var initBills = {};
         
@@ -123,7 +128,11 @@ export default class Approvals extends React.Component {
             var id = keys[i];
             
             // Changing the bill's type and its render effects.
-            await axios.patch(`http://127.0.0.1:8000/api/usage/${id}/?status=${type}&approval=test`);
+            await axios.patch(`http://127.0.0.1:8000/api/usage/${id}/?status=${type}&approval=test`, null, {
+                headers: {
+                    Authorization: `Token ${this.props.user}` 
+                }
+            });
             type === "UNUSABLE" ? newBills[id].audit_status = "UNUSABLE" : delete newBills[id];
             newChecked[id] = false;
         }
@@ -161,7 +170,7 @@ export default class Approvals extends React.Component {
 
         return (
             <div className="approvalPage">
-                <Header />
+                <Header user={this.props.user}/>
                 <div className="tableContainer">
                     <TableContainer component={Paper}>
                         <Table aria-label="simple table">
