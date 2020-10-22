@@ -7,4 +7,5 @@ class UserInfoViewSet(viewsets.ModelViewSet):
     serializer_class = UserInfoSerializer
 
     def get_queryset(self):
-        return UserInfo.objects.all()
+        id = self.request.user.userinfo.user.id
+        return UserInfo.objects.filter(pk=id)
