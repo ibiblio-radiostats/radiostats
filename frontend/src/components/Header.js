@@ -37,17 +37,17 @@ export default class Header extends React.Component {
         return (
             <div className="headerContainer">
                 <img src={ibiblioLogo} alt="Ibiblio" className="imageContainer"/>
-    
+
                 <nav className="navBarContainer">
                     <Link to="/home" style={navStyle}> Home </Link>
                     { (userTitle !== "Radio User" && <Link to="/Approvals" style={navStyle}> Approvals </Link>) || null }
                     <Link to="/profile" style={navStyle}> Profile </Link>
                 </nav>
-    
+
                 <div className="greetingsContainer">
                     Hi {userTitle}!
                 </div>
-    
+
                 <div className="logoutBtnContainer">
                     <Link to="/login" style={navStyle}>
                         <Button id="logoutBtn" onClick={this.handleLogout}> Logout </Button>

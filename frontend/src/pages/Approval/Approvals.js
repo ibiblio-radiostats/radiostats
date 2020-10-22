@@ -13,9 +13,9 @@ import axios from 'axios';
 import './Approval.css';
 
 // Retrieving the month and year.
-const monthNumToName = ["January", "February", "March", 
-                        "April"  , "May"     , "June", 
-                        "July"   , "August"  , "September", 
+const monthNumToName = ["January", "February", "March",
+                        "April"  , "May"     , "June",
+                        "July"   , "August"  , "September",
                         "October", "November", "December"]
 
 export default class Approvals extends React.Component {
@@ -38,10 +38,10 @@ export default class Approvals extends React.Component {
         // Axios call for inital bills.
         var initChecked = {};
         var initBills = {};
-        const response = await axios.get('http://127.0.0.1:8000/api/usage?approval=test', {
+        const response = await axios.get(`${window._env_.BACKEND_BASE_URL}api/usage?approval=test`, {
             headers: {
                 Authorization: `Token ${user}`
-            } 
+            }
         });
 
         // Iterating through the response.
@@ -72,7 +72,7 @@ export default class Approvals extends React.Component {
 
         // Creating a copy of [billsSelected].
         var newBillsSelected = JSON.parse(JSON.stringify(this.state.billsSelected));
-        
+
         // If the number of buttons selected is 0, hide the buttons.
         if (event.target.checked) {
             newBillsSelected[id] = 1;
@@ -81,7 +81,7 @@ export default class Approvals extends React.Component {
                 billsSelected: newBillsSelected,
                 checked: newChecked
             })
-            
+
         // If the number of buttons selected is 0, hide the buttons.
         } else {
             delete newBillsSelected[id]
@@ -127,11 +127,11 @@ export default class Approvals extends React.Component {
         for (var i = 0; i < keys.length; i++) {
             // Change [id]'s status to the type given.
             var id = keys[i];
-            
+
             // Changing the bill's type and its render effects.
-            await axios.patch(`http://127.0.0.1:8000/api/usage/${id}/?status=${type}&approval=test`, null, {
+            await axios.patch(`${window._env_.BACKEND_BASE_URL}api/usage/${id}/?status=${type}&approval=test`, null, {
                 headers: {
-                    Authorization: `Token ${this.state.user}` 
+                    Authorization: `Token ${this.state.user}`
                 }
             });
             type === "UNUSABLE" ? newBills[id].audit_status = "UNUSABLE" : delete newBills[id];
@@ -148,20 +148,20 @@ export default class Approvals extends React.Component {
 
     render() {
         // Approve button.
-        let approveButton = 
+        let approveButton =
         <Button
             color="primary"
             variant="contained"
             id="approveButton"
             disabled={!Object.keys(this.state.billsSelected).length}
-            onClick={(e) => this.handleBill("PROCESSED", e)}> 
-            Approve 
+            onClick={(e) => this.handleBill("PROCESSED", e)}>
+            Approve
         </Button>
 
         // Reject button.
-        let rejectButton = 
+        let rejectButton =
         <Button
-            color="secondary" 
+            color="secondary"
             variant="contained"
             id="rejectButton"
             disabled={!Object.keys(this.state.billsSelected).length}

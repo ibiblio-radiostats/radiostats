@@ -1,0 +1,18 @@
+---
+# Development/testing config.yml
+frontend:
+  host: '127.0.0.1'
+  port: 3000
+  tls: false
+backend:
+  debug: true
+  # The hosts ['.localhost', '127.0.0.1', '[::1]'] are automatically allowed when debug is true
+  host: '127.0.0.1'
+  port: 8000
+  path: '/'
+  tls: false
+  secret_key: 'l^k&e20&r754)5zi^8%zbfus66j#ytz@%bu44(fos!&7zgbl1d'
+  database:
+    engine: 'sqlite3'
+    # Path is relative to BASE_DIR - see settings.py in backend
+    name: 'db.sqlite3'

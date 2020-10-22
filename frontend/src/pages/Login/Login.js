@@ -41,7 +41,7 @@ export default class Login extends React.Component {
         // Retrieving the user's token.
         var response = await axios({
             method: 'post',
-            url: 'http://127.0.0.1:8000/rest-auth/login/', 
+            url: `${window._env_.BACKEND_BASE_URL}rest-auth/login/`,
             data: {
                 "username": this.state.username,
                 "password": this.state.password
@@ -53,9 +53,9 @@ export default class Login extends React.Component {
         this.props.setUser(user);
 
         // Retrieving user's title.
-        var userTitle = await axios.get("http://127.0.0.1:8000/api/users/", {
+        var userTitle = await axios.get(`${window._env_.BACKEND_BASE_URL}api/users/`, {
             headers: {
-                Authorization: `Token ${user}` 
+                Authorization: `Token ${user}`
             }
         });
 
@@ -71,13 +71,13 @@ export default class Login extends React.Component {
         return (
             <>
             {this.state.toHome ? <Redirect to="/home" /> : null}
-    
+
             <div className = "loginFormContainer" alt="Ibiblio">
                 <div className="title">
                     <img src={ibiblioLogo} alt="Ibiblio" style={{width: "40%", height: "30%"}}/>
                     <div className = "subtitle"> Radio Stats Billing Portal</div>
                 </div>
-    
+
                 <div className="loginFormFieldContainer">
                     <div className="loginFormField">
                         <TextField
@@ -89,8 +89,8 @@ export default class Login extends React.Component {
                         onChange={this.handleUsername}
                         />
                     </div>
-    
-                    <div className="loginFormField"> 
+
+                    <div className="loginFormField">
                         <TextField
                         id="filled-password-input"
                         label="Password"
@@ -102,7 +102,7 @@ export default class Login extends React.Component {
                         />
                     </div>
                 </div>
-    
+
                 <div className="buttonContainer">
                     <Button variant="contained" color="primary" className="loginBtn" onClick={this.handleLogin}>
                         Login
@@ -114,7 +114,7 @@ export default class Login extends React.Component {
                     </Link>
                 </div>
             </div>
-    
+
             </>
         );
     }
