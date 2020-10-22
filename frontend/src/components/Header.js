@@ -2,7 +2,6 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import ibiblioLogo from '../assets/ibiblogo.png';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import './Header.css'
 
 const navStyle = {
@@ -22,40 +21,31 @@ export default class Header extends React.Component {
 
     // Logs the user out.
     async handleLogout(event) {
-        await axios.get("http://127.0.0.1:8000/rest-auth/logout/", {
-            headers: {
-                Authorization: `Token ${this.props.user}` 
-            }
-        });
+        localStorage.clear();
     }
 
     // Setting the user title and header rendering.
     async componentDidMount() {
-        var response = await axios.get("http://127.0.0.1:8000/api/users/", {
-            headers: {
-                Authorization: `Token ${this.props.user}` 
-            }
-        });
-
-        var userTitle = response.data[0].role === "IBIBLIO_ADMIN" ? "Admin" : "Radio User";
+        var userTitle = this.props.userTitle === "STATION_USER" ? "Radio user" : "Admin";
         this.setState({
             userTitle: userTitle
         })
     }
 
     render() {
+        var userTitle = localStorage.getItem('userTitle');
         return (
             <div className="headerContainer">
                 <img src={ibiblioLogo} alt="Ibiblio" className="imageContainer"/>
     
                 <nav className="navBarContainer">
                     <Link to="/home" style={navStyle}> Home </Link>
-                    { (this.state.userTitle !== "Radio User" && <Link to="/Approvals" style={navStyle}> Approvals </Link>) || null }
+                    { (userTitle !== "Radio User" && <Link to="/Approvals" style={navStyle}> Approvals </Link>) || null }
                     <Link to="/profile" style={navStyle}> Profile </Link>
                 </nav>
     
                 <div className="greetingsContainer">
-                    Hi {this.state.userTitle}!
+                    Hi {userTitle}!
                 </div>
     
                 <div className="logoutBtnContainer">

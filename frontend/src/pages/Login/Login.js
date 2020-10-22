@@ -48,7 +48,20 @@ export default class Login extends React.Component {
             }
         });
 
-        this.props.setUser(response.data.key);
+        // Setting user
+        var user = response.data.key
+        this.props.setUser(user);
+
+        // Retrieving user's title.
+        var userTitle = await axios.get("http://127.0.0.1:8000/api/users/", {
+            headers: {
+                Authorization: `Token ${user}` 
+            }
+        });
+
+        userTitle = userTitle.data[0].role === "STATION_USER" ? "Radio User" : "Admin";
+        localStorage.setItem('user', user);
+        localStorage.setItem('userTitle', userTitle);
         this.setState({
             toHome: true
         });

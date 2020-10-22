@@ -24,7 +24,8 @@ export default class Approvals extends React.Component {
         this.state = {
             bills: {},
             checked: {},
-            billsSelected: {}
+            billsSelected: {},
+            user: ""
         };
         this.handleCheckBoxChange = this.handleCheckBoxChange.bind(this);
         this.handleCheckAll = this.handleCheckAll.bind(this);
@@ -33,16 +34,16 @@ export default class Approvals extends React.Component {
 
     // Retrieves all bills when mounted.
     async componentDidMount() {
+        var user = localStorage.getItem('user');
         // Axios call for inital bills.
+        var initChecked = {};
+        var initBills = {};
         const response = await axios.get('http://127.0.0.1:8000/api/usage?approval=test', {
             headers: {
-                Authorization: `Token ${this.props.user}`
+                Authorization: `Token ${user}`
             } 
         });
 
-        var initChecked = {};
-        var initBills = {};
-        
         // Iterating through the response.
         for (var i = 0; i < response.data.length; i++) {
             // Adding new keys [month], [year], [cost], and [color] to the data.
@@ -130,7 +131,7 @@ export default class Approvals extends React.Component {
             // Changing the bill's type and its render effects.
             await axios.patch(`http://127.0.0.1:8000/api/usage/${id}/?status=${type}&approval=test`, null, {
                 headers: {
-                    Authorization: `Token ${this.props.user}` 
+                    Authorization: `Token ${this.state.user}` 
                 }
             });
             type === "UNUSABLE" ? newBills[id].audit_status = "UNUSABLE" : delete newBills[id];
@@ -170,7 +171,7 @@ export default class Approvals extends React.Component {
 
         return (
             <div className="approvalPage">
-                <Header user={this.props.user}/>
+                <Header user={this.state.userTitle}/>
                 <div className="tableContainer">
                     <TableContainer component={Paper}>
                         <Table aria-label="simple table">

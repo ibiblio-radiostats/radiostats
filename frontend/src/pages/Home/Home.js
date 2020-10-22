@@ -35,7 +35,8 @@ export default class Home extends React.Component {
                 "cost" : "desc",
                 "audit_status": "desc"
             },
-            previousCategory: ""
+            previousCategory: "",
+            user: "",
         };
         this.applyFilter = this.applyFilter.bind(this);
         this.sortCategory = this.sortCategory.bind(this);
@@ -44,10 +45,11 @@ export default class Home extends React.Component {
     }
 
     async componentDidMount() {
+        var user = localStorage.getItem('user');
         // Axios call for bills.
         const response = await axios.get('http://127.0.0.1:8000/api/usage/', {
             headers: {
-                Authorization: `Token ${this.props.user}` 
+                Authorization: `Token ${user}` 
             }
         });
 
@@ -62,7 +64,8 @@ export default class Home extends React.Component {
 
         // Setting new state.
         this.setState({
-            bills: response.data
+            bills: response.data,
+            user: user,
         })
     }
 
@@ -136,7 +139,7 @@ export default class Home extends React.Component {
         var response = await axios.get(
             `http://127.0.0.1:8000/api/usage/?${auditStatus}start_dt=${startDate.toISOString()}&end_dt=${endDate.toISOString()}`, {
             headers: {
-                Authorization: `Token ${this.props.user}` 
+                Authorization: `Token ${this.state.user}` 
             }
         });
         
@@ -172,7 +175,7 @@ export default class Home extends React.Component {
     render() {
         return (
             <div className="homePage">
-                <Header user={this.props.user}/>
+                <Header/>
                 <div id="tableHeader">
                     <div id = "topBar">
                         <h2 style={{"marginLeft":"1%"}}> 

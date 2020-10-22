@@ -18,6 +18,15 @@ export default class AppRouter extends React.Component {
         this.handleNewUser = this.handleNewUser.bind(this);
     }
 
+    componentDidMount() {
+        const loggedInUser = localStorage.getItem('user');
+        if (loggedInUser) {
+            this.setState({
+                user: loggedInUser
+            })
+        }
+    }
+
     handleNewUser(newUser) {
         this.setState({
             user: newUser
