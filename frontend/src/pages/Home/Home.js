@@ -15,9 +15,9 @@ import axios from 'axios'
 import './Home.css';
 
 // Retrieving the month and year.
-const monthNumToName = ["January", "February", "March", 
-                        "April"  , "May"     , "June", 
-                        "July"   , "August"  , "September", 
+const monthNumToName = ["January", "February", "March",
+                        "April"  , "May"     , "June",
+                        "July"   , "August"  , "September",
                         "October", "November", "December"]
 
 export default class Home extends React.Component {
@@ -47,9 +47,9 @@ export default class Home extends React.Component {
     async componentDidMount() {
         var user = localStorage.getItem('user');
         // Axios call for bills.
-        const response = await axios.get('http://127.0.0.1:8000/api/usage/', {
+        const response = await axios.get(`${window._env_.BACKEND_BASE_URL}api/usage/`, {
             headers: {
-                Authorization: `Token ${user}` 
+                Authorization: `Token ${user}`
             }
         });
 
@@ -92,9 +92,9 @@ export default class Home extends React.Component {
                 sortedBills = sortCost(this.state.bills, sort);
                 break;
             default:
-                var response = await axios.get(`http://127.0.0.1:8000/api/usage/?order_by=${category}:${sort}`, {
+                var response = await axios.get(`${window._env_.BACKEND_BASE_URL}api/usage/?order_by=${category}:${sort}`, {
                     headers: {
-                        Authorization: `Token ${this.props.user}` 
+                        Authorization: `Token ${this.props.user}`
                     }
                 })
                 // Adding new keys [month], [year], and [cost] to the data.
@@ -137,12 +137,11 @@ export default class Home extends React.Component {
 
         // Retrieving the filtered bills.
         var response = await axios.get(
-            `http://127.0.0.1:8000/api/usage/?${auditStatus}start_dt=${startDate.toISOString()}&end_dt=${endDate.toISOString()}`, {
+            `${window._env_.BACKEND_BASE_URL}api/usage/?${auditStatus}start_dt=${startDate.toISOString()}&end_dt=${endDate.toISOString()}`, {
             headers: {
-                Authorization: `Token ${this.state.user}` 
+                Authorization: `Token ${this.state.user}`
             }
         });
-        
         // Adding new keys.
         for (var i = 0; i < response.data.length; i++) {
             // Adding new keys [month], [year], and [cost] to the data.
@@ -178,8 +177,8 @@ export default class Home extends React.Component {
                 <Header/>
                 <div id="tableHeader">
                     <div id = "topBar">
-                        <h2 style={{"marginLeft":"1%"}}> 
-                            Monthly Usage Information 
+                        <h2 style={{"marginLeft":"1%"}}>
+                            Monthly Usage Information
                             <span className="filter">
                                 <FilterModal applyFilter={this.applyFilter}/>
                              </span>
@@ -191,28 +190,28 @@ export default class Home extends React.Component {
                 <TableHead>
                     <TableRow id="header">
                         <TableCell>
-                            Radio Station 
-                            <ArrowDropDownBtn category={"stations"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["stations"]}/> 
+                            Radio Station
+                            <ArrowDropDownBtn category={"stations"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["stations"]}/>
                         </TableCell>
                         <TableCell>
-                            Month 
-                            <ArrowDropDownBtn category={"month"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["month"]}/> 
+                            Month
+                            <ArrowDropDownBtn category={"month"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["month"]}/>
                         </TableCell>
                         <TableCell>
                             Year
-                            <ArrowDropDownBtn category={"year"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["year"]}/> 
+                            <ArrowDropDownBtn category={"year"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["year"]}/>
                         </TableCell>
                         <TableCell>
                             Bandwidth Usage
-                            <ArrowDropDownBtn category={"bill_transit"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["bill_transit"]}/> 
+                            <ArrowDropDownBtn category={"bill_transit"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["bill_transit"]}/>
                         </TableCell>
                         <TableCell>
-                            Cost 
-                            <ArrowDropDownBtn category={"cost"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["cost"]}/> 
+                            Cost
+                            <ArrowDropDownBtn category={"cost"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["cost"]}/>
                         </TableCell>
                         <TableCell>
                             Audit Status
-                            <ArrowDropDownBtn category={"audit_status"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["audit_status"]}/> 
+                            <ArrowDropDownBtn category={"audit_status"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["audit_status"]}/>
                         </TableCell>
                     </TableRow>
                     </TableHead>
