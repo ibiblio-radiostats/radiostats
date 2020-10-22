@@ -61,6 +61,7 @@ export default class Approvals extends React.Component {
         this.setState({
             bills: initBills,
             checked: initChecked,
+            user: user
         })
     }
 
@@ -133,7 +134,9 @@ export default class Approvals extends React.Component {
                 headers: {
                     Authorization: `Token ${this.state.user}` 
                 }
-            });
+            }).catch((error) => (
+                console.log(error.response)
+            ));
             type === "UNUSABLE" ? newBills[id].audit_status = "UNUSABLE" : delete newBills[id];
             newChecked[id] = false;
         }
