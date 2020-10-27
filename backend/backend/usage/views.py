@@ -13,13 +13,10 @@ class ReportViewSet(viewsets.ModelViewSet):
     serializer_class = ReportSerializer
     
     def get_queryset(self):
-        print('enter')
         if self.request.user.is_superuser:
-            print('ewfawef')
             queryset = Report.objects.all()
             approval = self.request.query_params.get("approval",None)
         else: 
-            print('user')
             id = self.request.user.userinfo.sid
             queryset = Report.objects.filter(sid=id)
             approval = None
@@ -35,9 +32,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(audit_status__in=audit_list)
         if start_dt is not None and end_dt is not None:
             queryset = queryset.filter(bill_start__range=(start_dt,end_dt))
-        
         if approval is not None and self.request.user.is_superuser:
-            print('hi')
             queryset = queryset.filter(audit_status='PENDING_APPROVAL')
         else: 
             queryset = queryset.exclude(audit_status='PENDING_APPROVAL').exclude(
