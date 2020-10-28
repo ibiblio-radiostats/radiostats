@@ -11,7 +11,8 @@ import datetime
 
 class ReportViewSet(viewsets.ModelViewSet):
     serializer_class = ReportSerializer
-    
+    http_method_names = ['get', 'patch', 'head']
+
     def get_queryset(self):
         if self.request.user.is_superuser:
             queryset = Report.objects.all()
