@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up dependencies
-        run: sudo apt install apache2-dev
+        run: sudo apt-get update && sudo apt-get install apache2-dev
 
       - name: Checkout
         uses: actions/checkout@v2

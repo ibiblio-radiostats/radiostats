@@ -30,11 +30,13 @@ from backend.config_reader import (
     CORS_ORIGIN_WHITELIST,
     ALLOWED_HOSTS,
     DATABASES,
+    AGENT_KEY,
+    BACKEND_PATH,
 )
 
 SITE_ID = 1
 
-FORCE_SCRIPT_NAME = '/backend/'
+FORCE_SCRIPT_NAME = BACKEND_PATH
 
 # Application definition
 
@@ -143,5 +145,5 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/backend/static/'
+STATIC_URL = BACKEND_PATH + 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "../static") if DEBUG else "/static"

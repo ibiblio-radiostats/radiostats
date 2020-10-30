@@ -1,0 +1,14 @@
+APScheduler==3.6.3
+certifi==2020.11.8
+chardet==3.0.4
+idna==2.10
+loguru==0.5.3
+numpy==1.19.4
+pandas==1.1.4
+python-dateutil==2.8.1
+pytz==2020.4
+requests==2.25.0
+ruamel.yaml==0.16.12
+six==1.15.0
+tzlocal==2.1
+urllib3==1.26.1
