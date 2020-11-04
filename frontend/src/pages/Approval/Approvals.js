@@ -174,7 +174,7 @@ export default class Approvals extends React.Component {
 
         return (
             <div className="approvalPage">
-                <Header user={this.state.userTitle}/>
+                <Header/>
                 <div className="tableContainer">
                     <TableContainer component={Paper}>
                         <Table aria-label="simple table">
