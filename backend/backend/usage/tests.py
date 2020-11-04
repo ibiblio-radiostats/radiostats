@@ -144,6 +144,15 @@ class TestUsage(APITestCase):
         key = login_response.data.get('key')
         response = self.client.patch('/api/usage/3/?status=PROCESSED&approval=t',HTTP_AUTHORIZATION='Token ' + key)
         self.assertEquals(response.status_code,204)
+        response = self.client.patch('/api/usage/10/?status=PROCESSED&approval=t',HTTP_AUTHORIZATION='Token ' + key)
+        self.assertEquals(response.status_code,404)
+
+        login_response = self.client.post('/rest-auth/login/',{'username':'user','password':'password'},format='json')
+        key = login_response.data.get('key')
+        response = self.client.patch('/api/usage/3/?status=PROCESSED&approval=t',HTTP_AUTHORIZATION='Token ' + key)
+        self.assertEquals(response.status_code,403)
+
+
 
     def test_adminApproval(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.admin.token.key)

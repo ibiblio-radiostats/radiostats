@@ -18,14 +18,15 @@ from django.conf.urls import url
 from django.urls import include, path
 from rest_framework import permissions, routers
 from backend.usage.views import ReportViewSet, StationViewSet
-from backend.users.views import UserInfoViewSet
+from backend.users.views import UserInfoViewSet,UserViewSet,ChangePassword,ChangeUserInfo
 from drf_yasg2.views import get_schema_view
 from drf_yasg2 import openapi
 
 router = routers.DefaultRouter()
 router.register("station", StationViewSet, basename="station")
 router.register("usage", ReportViewSet, basename="usage")
-router.register("users", UserInfoViewSet, basename="users")
+router.register("userinfo", UserInfoViewSet, basename="userinfo")
+router.register("user",UserViewSet,basename="user")
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -38,6 +39,8 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path('api/user/change_password/',ChangePassword.as_view(), name='change_password'),
+    path('api/user/change_userinfo/',ChangeUserInfo.as_view(), name='change_userinfo'),
     path('api/',include(router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
