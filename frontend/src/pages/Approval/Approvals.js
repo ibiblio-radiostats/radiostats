@@ -125,7 +125,6 @@ export default class Approvals extends React.Component {
         // New bills.
         var newBills = JSON.parse(JSON.stringify(this.state.bills));
         var newChecked = JSON.parse(JSON.stringify(this.state.checked));
-
         // Iterating through the bills and approving/rejecting those who are selected.
         var keys = Object.keys(this.state.billsSelected);
         for (var i = 0; i < keys.length; i++) {

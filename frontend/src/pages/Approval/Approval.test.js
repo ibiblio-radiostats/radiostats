@@ -18,8 +18,35 @@ describe("render without crashing", () => {
 describe("handle select all checkbox", () => {
     it("changes all checkboxes to be selected", () => {
         const wrapper = shallow(<Approval/>)
+        wrapper.setState({
+            bills: {
+                "1": {
+                    "id": 1,
+                    "report_dtm": "2020-11-04T17:39:21Z",
+                    "bill_start": "2020-11-04T17:39:22Z",
+                    "bill_end": "2020-11-04T17:39:23Z",
+                    "audit_status": "PROCESSING",
+                    "bill_transit": 2,
+                    "cost_mult": 2,
+                    "sid": 1,
+                    "stations": "WCPE",
+                    "year": 2020
+                }
+            },
+            checked: {
+                "1": false
+            }
+    })
+
+        const event = {
+            target: {
+                checked: true
+            }
+        }
+
         const checkAllBox = wrapper.find("#checkAllBox")
-        checkAllBox.simulate('check')
+        checkAllBox.simulate('check', event)
+        // expect()
     })
 })
 
@@ -94,7 +121,7 @@ describe("adding bills", () => {
                 "year": 2020
             }
         }})
-        const nRows   = wrapper.find(TableRow).length;
+        const nRows = wrapper.find(TableRow).length;
         expect(nRows).toBe(5)
     })
 })
@@ -122,6 +149,60 @@ describe("removing all bills", () => {
                 "1": false
             }
         })
-        expect(wrapper.find(TableRow).length).toBe(3)
+
+        const event = {
+            target: {
+                checked: true
+            }
+        }
+
+        wrapper.find("#checkAllBox").simulate("change", event)
+        wrapper.find("#rejectButton").simulate("click")
+    })
+})
+
+describe("dummy button clicks", () => {
+    it("approve button click", () => {
+        const wrapper = shallow(<Approval/>)
+        wrapper.setState({
+            bills: {
+                "1": {
+                    "id": 1,
+                    "report_dtm": "2020-11-04T17:39:21Z",
+                    "bill_start": "2020-11-04T17:39:22Z",
+                    "bill_end": "2020-11-04T17:39:23Z",
+                    "audit_status": "PROCESSING",
+                    "bill_transit": 2,
+                    "cost_mult": 2,
+                    "sid": 1,
+                    "stations": "WCPE",
+                    "year": 2020
+                }
+            }
+        })
+        wrapper.find("#approveButton").simulate('click')
+        expect(wrapper.find(TableRow).length).toBe(3) 
+    })
+
+    it("reject button click", () => {
+        const wrapper = shallow(<Approval/>)
+        wrapper.setState({
+            bills: {
+                "1": {
+                    "id": 1,
+                    "report_dtm": "2020-11-04T17:39:21Z",
+                    "bill_start": "2020-11-04T17:39:22Z",
+                    "bill_end": "2020-11-04T17:39:23Z",
+                    "audit_status": "PROCESSING",
+                    "bill_transit": 2,
+                    "cost_mult": 2,
+                    "sid": 1,
+                    "stations": "WCPE",
+                    "year": 2020
+                }
+            }
+        })
+        wrapper.find("#rejectButton").simulate('click')
+        expect(wrapper.find(TableRow).length).toBe(3) 
     })
 })

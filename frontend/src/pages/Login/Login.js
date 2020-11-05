@@ -97,6 +97,7 @@ export default class Login extends React.Component {
                         onChange={this.handleUsername}
                         error={this.state.error}
                         helperText = {this.state.error ? "Invalid credentials." : ""}
+                        value={this.state.username}
                         />
                     </div>
 
@@ -111,6 +112,7 @@ export default class Login extends React.Component {
                         onChange={this.handlePassword}
                         error={this.state.error}
                         helperText = {this.state.error ? "Invalid credentials." : ""}
+                        value={this.state.password}
                         />
                     </div>
                 </div>
@@ -120,7 +122,7 @@ export default class Login extends React.Component {
                         Login
                     </Button>
                     <Link to="" style={navStyle}>
-                        <Button variant="contained" color="default" className="forgotPasswordBtn">
+                        <Button id="forgotPasswordBtn" variant="contained" color="default" className="forgotPasswordBtn">
                             Forgot Password
                         </Button>
                     </Link>
