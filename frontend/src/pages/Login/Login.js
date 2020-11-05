@@ -54,7 +54,7 @@ export default class Login extends React.Component {
                 var user = res.data.key
 
                 // Retrieving user's title.
-                var userTitle = await axios.get(`${window._env_.BACKEND_BASE_URL}api/users/`, {
+                var userTitle = await axios.get(`${window._env_.BACKEND_BASE_URL}api/userinfo/`, {
                     headers: {
                         Authorization: `Token ${user}`
                     }

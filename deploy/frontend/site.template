@@ -1,9 +1,19 @@
 server {
+    include /etc/nginx/mime.types;
+
     listen       ${FRONTEND_PORT};
-    server_name  localhost;
+    server_name  ${FRONTEND_HOST};
 
     location / {
         root   /usr/share/nginx/html;
         try_files $uri $uri/ /index.html;
+    }
+
+    location /backend/ {
+            proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/;
+            proxy_redirect default;
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 }

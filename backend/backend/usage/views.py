@@ -34,7 +34,7 @@ class ReportViewSet(viewsets.ModelViewSet):
         if start_dt is not None and end_dt is not None:
             queryset = queryset.filter(bill_start__range=(start_dt,end_dt))
         if approval is not None and self.request.user.is_superuser:
-            queryset = queryset.filter(audit_status='PENDING_APPROVAL')
+            queryset = queryset.filter(audit_status__in=['PENDING_APPROVAL','UNUSABLE'])
         else: 
             queryset = queryset.exclude(audit_status='PENDING_APPROVAL').exclude(
                 audit_status='UNUSABLE')
