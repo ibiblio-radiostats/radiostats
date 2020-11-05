@@ -18,7 +18,7 @@ def read(config_file, base_dir):
     frontend_protocol_scheme = "https" if config["frontend"]["tls"] else "http"
     CORS_ORIGIN_WHITELIST = [f'{frontend_protocol_scheme}://{config["frontend"]["host"]}:{config["frontend"]["port"]}']
 
-    ALLOWED_HOSTS = [config["backend"]["host"]]
+    ALLOWED_HOSTS = [config["frontend"]["host"]]
     if config["backend"]["debug"]:
         ALLOWED_HOSTS += ['.localhost', '127.0.0.1', '[::1]']
 
