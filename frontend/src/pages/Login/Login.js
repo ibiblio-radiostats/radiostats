@@ -1,8 +1,8 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { Link } from 'react-router-dom';
 import ibiblioLogo from '../../assets/ibiblogo.png';
+import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css'
@@ -40,38 +40,39 @@ export default class Login extends React.Component {
 
     handleLogin = async () => {
         // Retrieving the user's token.
-        await axios({
-            method: 'post',
-            url: `${window._env_.BACKEND_BASE_URL}rest-auth/login/`,
-            data: {
-                "username": this.state.username,
-                "password": this.state.password
-            }
-        })
-        .then(async res => {
-            // Setting user.
-            var user = res.data.key
-
-            // Retrieving user's title.
-            var userTitle = await axios.get(`${window._env_.BACKEND_BASE_URL}api/users/`, {
-                headers: {
-                    Authorization: `Token ${user}`
+        try {
+            await axios({
+                method: 'post',
+                url: `${window._env_.BACKEND_BASE_URL}rest-auth/login/`,
+                data: {
+                    "username": this.state.username,
+                    "password": this.state.password
                 }
-            });
+            })
+            .then(async res => {
+                // Setting user.
+                var user = res.data.key
 
-            // Saving [user] and [userTitle] and updating the screen.
-            userTitle = userTitle.data[0].role === "STATION_USER" ? "Radio User" : "Admin";
-            localStorage.setItem('user', user);
-            localStorage.setItem('userTitle', userTitle);
-            this.setState({
-                toHome: true
-            });
-        })
-        .catch((err) => {
+                // Retrieving user's title.
+                var userTitle = await axios.get(`${window._env_.BACKEND_BASE_URL}api/users/`, {
+                    headers: {
+                        Authorization: `Token ${user}`
+                    }
+                });
+
+                // Saving [user] and [userTitle] and updating the screen.
+                userTitle = userTitle.data[0].role === "STATION_USER" ? "Radio User" : "Admin";
+                localStorage.setItem('user', user);
+                localStorage.setItem('userTitle', userTitle);
+                this.setState({
+                    toHome: true
+                });
+            })
+        } catch(err) {
             this.setState({
                 error: true
-            })
-        });
+            });
+        }
     }
 
     render() {

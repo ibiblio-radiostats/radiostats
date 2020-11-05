@@ -34,35 +34,38 @@ export default class Approvals extends React.Component {
 
     // Retrieves all bills when mounted.
     async componentDidMount() {
-        var user = localStorage.getItem('user');
         // Axios call for inital bills.
+        var user = localStorage.getItem('user');
         var initChecked = {};
         var initBills = {};
-        const response = await axios.get(`${window._env_.BACKEND_BASE_URL}api/usage?approval=test`, {
-            headers: {
-                Authorization: `Token ${user}`
-            }
-        });
+        try {
+            await axios.get(`${window._env_.BACKEND_BASE_URL}api/usage?approval=test`, {
+                headers: {
+                    Authorization: `Token ${user}`
+                }
+            }).then((res) => {
+                // Iterating through the response.
+                for (var i = 0; i < res.data.length; i++) {
+                    // Adding new keys [month], [year], [cost], and [color] to the data.
+                    let date = new Date(res.data[i].bill_start);
+                    res.data[i].month = monthNumToName[date.getMonth()];
+                    res.data[i].year = date.getFullYear();
+                    res.data[i].cost = (res.data[i].bill_transit * res.data[i].cost_mult).toFixed(2)
 
-        // Iterating through the response.
-        for (var i = 0; i < response.data.length; i++) {
-            // Adding new keys [month], [year], [cost], and [color] to the data.
-            let date = new Date(response.data[i].bill_start);
-            response.data[i].month = monthNumToName[date.getMonth()];
-            response.data[i].year = date.getFullYear();
-            response.data[i].cost = (response.data[i].bill_transit * response.data[i].cost_mult).toFixed(2)
-
-            // Inserting keys [id] for [initChecked] and [initBills].
-            initChecked[response.data[i].id] = false;
-            initBills[response.data[i].id] = response.data[i];
+                    // Inserting keys [id] for [initChecked] and [initBills].
+                    initChecked[res.data[i].id] = false;
+                    initBills[res.data[i].id] = res.data[i];
+                }
+                // Setting state.
+                this.setState({
+                    bills: initBills,
+                    checked: initChecked,
+                    user: user
+                })
+            })
+        } catch(e) {
+            // console.log(e);
         }
-
-        // Setting state.
-        this.setState({
-            bills: initBills,
-            checked: initChecked,
-            user: user
-        })
     }
 
     // Called once a checkbox is checked. Displays the status buttons.
@@ -130,13 +133,16 @@ export default class Approvals extends React.Component {
             var id = keys[i];
 
             // Changing the bill's type and its render effects.
-            await axios.patch(`${window._env_.BACKEND_BASE_URL}api/usage/${id}/?status=${type}&approval=test`, null, {
-                headers: {
-                    Authorization: `Token ${this.state.user}`
-                }
-            }).catch((error) => (
-                console.log(error.response)
-            ));
+            try {
+                await axios.patch(`${window._env_.BACKEND_BASE_URL}api/usage/${id}/?status=${type}&approval=test`, null, {
+                    headers: {
+                        Authorization: `Token ${this.state.user}`
+                    }
+                });
+            } catch (e) {
+                // console.log(e);
+            }
+
             type === "UNUSABLE" ? newBills[id].audit_status = "UNUSABLE" : delete newBills[id];
             newChecked[id] = false;
         }
@@ -180,7 +186,7 @@ export default class Approvals extends React.Component {
                         <Table aria-label="simple table">
                             <TableHead id="topBar">
                                 <TableRow>
-                                    <TableCell padding="checkbox" align="left"><Checkbox color='default' onChange={this.handleCheckAll}/> </TableCell>
+                                    <TableCell padding="checkbox" align="left"><Checkbox id="checkAllBox"color='default' onChange={this.handleCheckAll}/> </TableCell>
                                     <TableCell align="justify"> </TableCell>
                                     <TableCell align="justify"> </TableCell>
                                     <TableCell align="justify"> </TableCell>

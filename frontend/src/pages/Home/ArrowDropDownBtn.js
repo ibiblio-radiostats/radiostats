@@ -1,7 +1,7 @@
 import React from 'react';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import IconButton from '@material-ui/core/IconButton';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import IconButton from '@material-ui/core/IconButton';
 
 export default function ArrowDropDownBtn({category, sortCategory, initSort}) {
     const [sort, setSort] = React.useState(initSort);

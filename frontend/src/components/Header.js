@@ -33,13 +33,13 @@ export default class Header extends React.Component {
                     <Link to="/profile" style={navStyle}> Profile </Link>
                 </nav>
 
-                <div className="greetingsContainer">
+                <div data-testid="greetingsContainer" className="greetingsContainer">
                     Hi {userTitle}!
                 </div>
 
                 <div className="logoutBtnContainer">
                     <Link to="/login" style={navStyle}>
-                        <Button id="logoutBtn" onClick={this.handleLogout}> Logout </Button>
+                        <Button data-testid="logoutBtn" id="logoutBtn" onClick={this.handleLogout}> Logout </Button>
                     </Link>
                 </div>
             </div>

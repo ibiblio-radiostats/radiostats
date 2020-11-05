@@ -42,20 +42,25 @@ export default class Home extends React.Component {
     async componentDidMount() {
         // Axios call for bills.
         var user = localStorage.getItem('user');
-        const response = await axios.get(`${window._env_.BACKEND_BASE_URL}api/usage/`, {
+        try {
+            await axios.get(`${window._env_.BACKEND_BASE_URL}api/usage/`, {
             headers: {
                 Authorization: `Token ${user}`
             }
-        });
+            }).then((res => {
+                // Adding additional keys.
+                res.data = addKeys(res.data);
+        
+                // Setting new state.
+                this.setState({
+                    bills: res.data,
+                    user: user,
+                })
+            }));
+        } catch(e) {
+            // console.log(e);
+        }
 
-        // Adding additional keys.
-        response.data = addKeys(response.data);
-
-        // Setting new state.
-        this.setState({
-            bills: response.data,
-            user: user,
-        })
     }
 
     // Individual sorts on categories.
