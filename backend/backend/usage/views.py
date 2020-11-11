@@ -5,13 +5,12 @@ from backend.usage.models import Report, Station
 from backend.usage.serializers import ReportSerializer, StationSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
-
 import datetime
 # Create your views here.
 
 class ReportViewSet(viewsets.ModelViewSet):
     serializer_class = ReportSerializer
-    http_method_names = ['get', 'patch', 'head']
+    http_method_names = ['get', 'patch', 'head','post']
 
     def get_queryset(self):
         if self.request.user.is_superuser:
@@ -46,6 +45,12 @@ class ReportViewSet(viewsets.ModelViewSet):
             queryset = queryset.order_by(order_sign + order_name)
         return queryset
 
+    def create(self,request):
+        serializer = ReportSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+           
     def partial_update(self,request, *args, **kwargs):
         if self.request.user.is_superuser:
             pk = kwargs['pk']
