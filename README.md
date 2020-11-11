@@ -22,7 +22,6 @@ how can a user get a working development environment? Give step-by-step instruct
 __Running locally:__ 
 
 ## 1. Setup Python VirtualEnv  
----
 __Windows__
 ```powershell 
 cd \path\to\repository-root
@@ -43,7 +42,6 @@ pip install -r requirements.txt
  __virtualenv__ 
 
 ## 2 a.) Run Backend
----
 __Windows__
 ```powershell 
 cd \path\to\repository-root
@@ -69,7 +67,7 @@ Tested by: Zachary Guan <br>
 System: Windows 10 
 
 ## 2 b.) Frontend
----
+
 __Windows__
 ```powershell 
 cd \path\to\repository-root
