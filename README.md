@@ -13,13 +13,9 @@ Getting Started
 - [Python 3.X](https://www.python.org/downloads/)
 - [Node.js](https://nodejs.org/en/download/)
 
-**what other software needs to be installed before developing or running this software (e.g. Node.js)? Give specific commands to install the software, noting any assumptions about package management tools or operating system.**
-
 Installing: 
 ===
 how can a user get a working development environment? Give step-by-step instructions.
-
-__Running locally:__ 
 
 ## 1. Setup Python VirtualEnv  
 __Windows__
@@ -95,8 +91,8 @@ Testing
 === 
 The following commands below will run the test suite. In addition, any push/pull request to github will automatically run the test suite and generate a coverage report. This was implemented through Github Actions. 
 
-**Before running 
-backend test suite
+
+## Backend Test Suite
 
 __Windows Test__
 ```powershell 
@@ -129,7 +125,7 @@ coverage run --source='.' .\manage.py test backend.usage backend.users
 coverage html 
 ```
 
-__Frontend Test Suite__
+## Frontend Test Suite
 
 __Windows Test__
 ```powershell
@@ -161,14 +157,12 @@ Any other test-related commands to know about, e.g. a different command for unit
 
 Deployment
 ===
-The current production environment lives in a VM hosted by ibiblio.
+- The current production environment lives in a VM hosted by ibiblio.
 
-We currently have a locally hosted pre-production environment we use but after our work on the project, we will shut it down. 
+- We currently have a locally hosted pre-production environment we use but after our work on the project, we will shut it down. 
 
-Our project is currently CI/CD enabled through Github Actions
+- Our project is currently CI/CD enabled through Github Actions
 
-__What are the various pieces that the fully deployed software uses? For example, with Heroku, what addons does the app use?
-Is continuous integration or continuous deployment enabled? If so, where does it live?__
 
 Technologies Used
 ===
@@ -182,15 +176,15 @@ Technologies Used
 - PostgreSQL
 - Github Actions
 
-ADR is a pdf at the root of the repository. 
+The ADR is a pdf at the root of the repository. 
 
 Contributing
 ===
-To contribute to this repository, contact ibiblio staff to gain access to this repository. 
+- To contribute to this repository, contact ibiblio staff to gain access to this repository. 
 
-There are currently no conventions in place for the project 
+- There are currently no conventions in place for the project 
 
-To find out more about this project, refer to our website, [ibiblio_radiostats](https://tarheels.live/ibibliobillingportal/)
+- To find out more about this project, refer to our website, [ibiblio_radiostats](https://tarheels.live/ibibliobillingportal/)
 
 Authors
 ===
