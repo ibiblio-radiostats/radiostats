@@ -1,11 +1,17 @@
 import React from 'react';
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../../components/Header';
 import TextField from '@material-ui/core/TextField';
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import axios from 'axios';
 import './Profile.css';
+import { Button } from '@material-ui/core';
+
+const navStyle = {
+    "textDecoration": "none",
+}
 
 export default function Profile() {
     const userTitle = localStorage.getItem("userTitle");
@@ -39,8 +45,6 @@ export default function Profile() {
                 headers: {
                     Authorization: `Token ${user}`
                 }
-            }).then((res) => {
-                console.log(res);
             }).catch((err) => {
                 console.log(err);
             })
@@ -60,26 +64,31 @@ export default function Profile() {
         setEmail(event.target.value);
     }
 
-    const handleEdit = async (event) => {
-        var user = localStorage.getItem("user");
+    const handleSave = async (event) => {
         if (edit) {
-            await axios({
-                url: `${window._env_.BACKEND_BASE_URL}api/user/change_userinfo/`,
-                method: 'patch',
-                headers: {
-                    Authorization: `Token ${user}`
-                },
-                data: {
-                    "first_name": firstName,
-                    "last_name": lastName,
-                    "email": email,
-                }
-            }).catch((err) => {
-                console.log(err);
-            })
+            var user = localStorage.getItem("user");
+            if (edit) {
+                await axios({
+                    url: `${window._env_.BACKEND_BASE_URL}api/user/change_userinfo/`,
+                    method: 'patch',
+                    headers: {
+                        Authorization: `Token ${user}`
+                    },
+                    data: {
+                        "first_name": firstName,
+                        "last_name": lastName,
+                        "email": email,
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+            }
+            setEdit(!edit);
         }
+    }
 
-        setEdit(!edit);
+    const handleEdit = (event) => {
+        if (!edit) setEdit(!edit);
     }
 
     return (
@@ -97,15 +106,23 @@ export default function Profile() {
                     <div className="emailContainer">
                         <TextField id="email" onChange={handleEmail} label="Email" value={email} disabled={!edit}/>
                     </div>
+                    <div className="saveBtnContainer">
+                        {edit ? <Button variant="contained" color="primary" onClick={handleSave}> Save </Button> : null }
+                    </div>
                 </div>
                 <div className="accountContainer">
                     <h2> Account </h2>
-                    <span className="firstNameContainer">
+                    <span className="passwordContainer">
+                        <TextField id="password"  label="Password" value="*********"disabled={true}/>
+                    </span>
+                    <span className="userContainer">
                         <TextField id="user" label="User" value={userTitle} disabled={true}/>
                     </span>
-                    <span className="lastNameContainer">
-                        <TextField id="password"  label="Password" disabled={true}/>
-                    </span>
+                    <div>
+                        <Link to="/changepassword" style={navStyle}>
+                            Change Password
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

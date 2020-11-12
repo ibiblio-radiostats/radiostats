@@ -56,6 +56,7 @@ export default class Approvals extends React.Component {
                     initChecked[res.data[i].id] = false;
                     initBills[res.data[i].id] = res.data[i];
                 }
+                console.log(initBills);
                 // Setting state.
                 this.setState({
                     bills: initBills,
@@ -64,7 +65,7 @@ export default class Approvals extends React.Component {
                 })
             })
         } catch(e) {
-            // console.log(e);
+            console.log(e);
         }
     }
 
@@ -138,7 +139,7 @@ export default class Approvals extends React.Component {
                     }
                 });
             } catch (e) {
-                // console.log(e);
+                console.log(e);
             }
 
             type === "UNUSABLE" ? newBills[id].audit_status = "UNUSABLE" : delete newBills[id];

@@ -80,7 +80,7 @@ export default class Login extends React.Component {
             <>
             {this.state.toHome ? <Redirect to="/home" /> : null}
 
-            <div className = "loginFormContainer" alt="Ibiblio">
+            <div className="loginFormContainer">
                 <div className="title">
                     <img src={ibiblioLogo} alt="Ibiblio" style={{width: "40%", height: "30%"}}/>
                     <div className = "subtitle"> Radio Stats Billing Portal</div>
