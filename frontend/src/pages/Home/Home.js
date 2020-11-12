@@ -58,7 +58,7 @@ export default class Home extends React.Component {
                 })
             }));
         } catch(e) {
-            // console.log(e);
+            console.log(e);
         }
 
     }

@@ -130,7 +130,6 @@ export default class Approvals extends React.Component {
         for (var i = 0; i < keys.length; i++) {
             // Change [id]'s status to the type given.
             var id = keys[i];
-
             // Changing the bill's type and its render effects.
             try {
                 await axios.patch(`${window._env_.BACKEND_BASE_URL}api/usage/${id}/?status=${type}&approval=test`, null, {

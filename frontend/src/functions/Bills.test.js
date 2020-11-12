@@ -5,12 +5,12 @@ describe("adds three keys", () => {
         const testObj = 
         [
             {
-                bill_start: "01-13-1999",
+                bill_start: "2020-10-01T00:00:00Z",
                 bill_transit: 1,
                 cost_mult: 2,
             },
             {
-                bill_start: "09-27-2001",
+                bill_start: "2020-10-31T23:59:59Z",
                 bill_transit: 3,
                 cost_mult: 4,
             },
@@ -23,13 +23,13 @@ describe("adds three keys", () => {
         const result = addKeys(testObj);
 
         // Expecting months.
-        expect(result[0].month).toBe("January");
-        expect(result[1].month).toBe("September");
+        expect(result[0].month).toBe("October");
+        expect(result[1].month).toBe("October");
         expect(result[2].month).toBe("December");
 
         // Expecting years.
-        expect(result[0].year).toBe(1999);
-        expect(result[1].year).toBe(2001);
+        expect(result[0].year).toBe(2020);
+        expect(result[1].year).toBe(2020);
         expect(result[2].year).toBe(2003);
 
         // Expecting cost.
