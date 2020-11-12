@@ -1,7 +1,5 @@
 # ibiblio Radiostats 
 
-## Summary 
-
 ibiblio hosts online streams for radio stations. Our task is to develop a web app that will automate the retrieval of bandwidth and cost data. The web app should show monthly costs and grant permissions to manage/view the data based on user (ibiblio admin, station staff, SILS finance).
 
 Getting Started
@@ -15,7 +13,6 @@ Getting Started
 
 Installing: 
 ===
-how can a user get a working development environment? Give step-by-step instructions.
 
 ## 1. Setup Python VirtualEnv  
 __Windows__
@@ -35,9 +32,8 @@ source bin/activate
 pip install -r requirements.txt
 ```
 
- __virtualenv__ 
 
-## 2 a.) Run Backend
+## 2 a.) Run Backend Locally
 __Windows__
 ```powershell 
 cd \path\to\repository-root
@@ -54,17 +50,8 @@ cp config.dev.yml config.yml
 cd ./backend
 python manage.py runserver
 ```
-__Warranty:__ 
 
->Last Test: 11/10/2020 <br>
-Tested by: Caleb Xu <br>
-System: Mac OS 
-
->Last Test: 11/10/2020 <br>
-Tested by: Zachary Guan <br>
-System: Windows 10 
-
-## 2 b.) Frontend
+## 2 b.) Running Frontend Locally
 
 __Windows__
 ```powershell 
@@ -87,9 +74,17 @@ __Warranty:__
 Tested by: Caleb Xu <br>
 System: Mac OS 
 
+>Last Test: 11/10/2020 <br>
+Tested by: Zachary Guan <br>
+System: Windows 10 
+
+>Last Test: 11/10/2020 <br>
+Tested by: Jonathan Chang <br>
+System: Windows 10 
+
 Testing
 === 
-The following commands below will run the test suite. In addition, any push/pull request to github will automatically run the test suite and generate a coverage report. This was implemented through Github Actions. 
+The following commands below will manually run the test suite however, any push/pull request to the GitHub repository will automatically run the test suite. This was implemented through Github Actions. 
 
 
 ## Backend Test Suite
@@ -151,9 +146,6 @@ __Mac/Linux Test__
 cd /path/to/frontend/
 npm test -- --coverage --watchAll=false
 ```
-
-How can the user run the test suite? Give specific commands.
-Any other test-related commands to know about, e.g. a different command for unit tests vs. integration tests?
 
 Deployment
 ===
@@ -217,4 +209,4 @@ SOFTWARE.
 
 Acknowledgements
 ===
-Special thanks to our mentor John Dinger and the assistance of our amazing team at ibiblio, Karen and Cristobal. 
+Special thanks to our mentor John Dinger, our instructor Jeff Terrell, and our amazing clients at ibiblio, Karen and Cristobal. 
