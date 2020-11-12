@@ -46,6 +46,7 @@ __Windows__
 ```powershell 
 cd \path\to\repository-root
 .\Scripts\activate
+copy-item config.dev.yml config.yml 
 cd .\backend\
 python manage.py runserver 
 ```
@@ -53,6 +54,7 @@ __Mac/Linux__
 ```sh
 cd \path\to\repository-root
 source bin/activate
+cp config.dev.yml config.yml 
 cd ./backend
 python manage.py runserver
 ```
@@ -71,15 +73,15 @@ System: Windows 10
 __Windows__
 ```powershell 
 cd \path\to\repository-root
-.\Scripts\activate
 cd .\frontend
+npm install
 npm run start
 ```
 __Mac/Linux__
 ```sh
-cd \path\to\repository-root
-source bin/activate
+cd /path/to/repository-root
 cd ./frontend
+npm install 
 npm run start
 ```
 
@@ -95,15 +97,63 @@ The following commands below will run the test suite. In addition, any push/pull
 
 **Before running 
 backend test suite
-```sh 
+
+__Windows Test__
+```powershell 
+cd \path\to\repository-root
+.\Scripts\activate
+cd .\backend
+python manage.py test
+```
+__Windows Test Coverage__
+```powershell
+cd \path\to\repository-root
+.\Scripts\activate
+cd .\backend
+coverage run --source='.' .\manage.py test backend.usage backend.users
+coverage html 
+```
+__Mac/Linux Test__
+```sh
 cd /path/to/backend/
 source bin/activate
 python manage.py test 
 ```
-frontend test suite
+__Mac/Linux Test Coverage__
+
 ```sh 
+cd /path/to/repository-root
+source bin/activate
+cd .\backend
+coverage run --source='.' .\manage.py test backend.usage backend.users
+coverage html 
+```
+
+__Frontend Test Suite__
+
+__Windows Test__
+```powershell
+cd \path\to\frontend\
+npm run test -- --watchAll=false
+```
+
+__Windows Test Coverage__
+```powershell
+cd \path\to\frontend\
+npm test -- --coverage --watchAll=false
+```
+
+
+__Mac/Linux Test__ 
+```sh
 cd /path/to/frontend/
-npm run test
+npm test -- --watchAll=false
+```
+
+__Mac/Linux Test__
+```sh
+cd /path/to/frontend/
+npm test -- --coverage --watchAll=false
 ```
 
 How can the user run the test suite? Give specific commands.
@@ -112,6 +162,10 @@ Any other test-related commands to know about, e.g. a different command for unit
 Deployment
 ===
 The current production environment lives in a VM hosted by ibiblio.
+
+We currently have a locally hosted pre-production environment we use but after our work on the project, we will shut it down. 
+
+Our project is currently CI/CD enabled through Github Actions
 
 __What are the various pieces that the fully deployed software uses? For example, with Heroku, what addons does the app use?
 Is continuous integration or continuous deployment enabled? If so, where does it live?__
@@ -134,7 +188,7 @@ Contributing
 ===
 To contribute to this repository, contact ibiblio staff to gain access to this repository. 
 
-__Are there any style, testing, or process conventions that a new developer should know about?__
+There are currently no conventions in place for the project 
 
 To find out more about this project, refer to our website, [ibiblio_radiostats](https://tarheels.live/ibibliobillingportal/)
 
