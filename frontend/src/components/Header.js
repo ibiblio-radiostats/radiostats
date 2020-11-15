@@ -13,23 +13,12 @@ const navStyle = {
 export default class Header extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            userTitle: ""
-        }
         this.handleLogout = this.handleLogout.bind(this);
     }
 
     // Logs the user out.
     async handleLogout(event) {
         localStorage.clear();
-    }
-
-    // Setting the user title and header rendering.
-    async componentDidMount() {
-        var userTitle = this.props.userTitle === "STATION_USER" ? "Radio user" : "Admin";
-        this.setState({
-            userTitle: userTitle
-        })
     }
 
     render() {
@@ -44,13 +33,13 @@ export default class Header extends React.Component {
                     <Link to="/profile" style={navStyle}> Profile </Link>
                 </nav>
 
-                <div className="greetingsContainer">
+                <div data-testid="greetingsContainer" className="greetingsContainer">
                     Hi {userTitle}!
                 </div>
 
                 <div className="logoutBtnContainer">
                     <Link to="/login" style={navStyle}>
-                        <Button id="logoutBtn" onClick={this.handleLogout}> Logout </Button>
+                        <Button data-testid="logoutBtn" id="logoutBtn" onClick={this.handleLogout}> Logout </Button>
                     </Link>
                 </div>
             </div>

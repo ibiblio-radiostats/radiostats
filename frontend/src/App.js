@@ -10,48 +10,15 @@ import {
   } from "react-router-dom";
 
 export default class AppRouter extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            user: ""
-        };
-        this.handleNewUser = this.handleNewUser.bind(this);
-    }
-
-    componentDidMount() {
-        const loggedInUser = localStorage.getItem('user');
-        if (loggedInUser) {
-            this.setState({
-                user: loggedInUser
-            })
-        }
-    }
-
-    handleNewUser(newUser) {
-        this.setState({
-            user: newUser
-        });
-    }
-
     render() {
         return (
             <Router>
                 <Switch>
-                    <Route exact path="/" render={(props) => (
-                        <Login {...props} setUser={this.handleNewUser} />
-                    )} />
-                    <Route path="/login" render={(props) => (
-                        <Login {...props} setUser={this.handleNewUser} />
-                    )} />
-                    <Route path="/home" render={(props) => (
-                        <Home {...props} user={this.state.user} />
-                    )} />
-                    <Route path="/approvals" render={(props) => (
-                        <Approvals {...props} user={this.state.user} />
-                    )} />
-                    <Route path="/profile" render={(props) => (
-                        <Profile {...props} user={this.state.user} />
-                    )} />
+                    <Route exact path="/" component={Login}/>
+                    <Route path="/login" component={Login}/>
+                    <Route path="/home" component={Home}/>
+                    <Route path="/approvals" component={Approvals} />
+                    <Route path="/profile" component={Profile} />
                 </Switch>
             </Router>
         );

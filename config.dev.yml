@@ -16,3 +16,17 @@ backend:
     engine: 'sqlite3'
     # Path is relative to BASE_DIR - see settings.py in backend
     name: 'db.sqlite3'
+agent:
+  debug: true
+  dev: true
+  icecast:
+    hostname: 'fake.icecast.example.org'
+    port: 8000
+    data_file: 'data/response.xml'
+    stats_url: '/admin/stats'
+    username: 'my_admin'
+    password: 'super_secure_password'
+    request_timeout: 5
+  cache_ttl: 240
+  data_dir: 'data'
+  key: 'ih#{YxFGDk(yRtB9k%jj}gf72rfVR8Nouy4w3n?/geHz.c3num=cbP6V86B(XKDN'

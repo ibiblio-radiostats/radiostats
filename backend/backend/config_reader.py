@@ -6,6 +6,8 @@ def read(config_file, base_dir):
     global CORS_ORIGIN_WHITELIST
     global ALLOWED_HOSTS
     global DATABASES
+    global AGENT_KEY
+    global BACKEND_PATH
     with open(config_file, mode='r') as file:
         try:
             config = yaml.safe_load(file)
@@ -18,9 +20,11 @@ def read(config_file, base_dir):
     frontend_protocol_scheme = "https" if config["frontend"]["tls"] else "http"
     CORS_ORIGIN_WHITELIST = [f'{frontend_protocol_scheme}://{config["frontend"]["host"]}:{config["frontend"]["port"]}']
 
-    ALLOWED_HOSTS = [config["backend"]["host"]]
+    ALLOWED_HOSTS = [config["frontend"]["host"], config["backend"]["host"]]
     if config["backend"]["debug"]:
         ALLOWED_HOSTS += ['.localhost', '127.0.0.1', '[::1]']
+
+    BACKEND_PATH = config["backend"]["path"]
 
     if config["backend"]["database"]["engine"] == 'sqlite3':
         DATABASES = {
@@ -42,3 +46,5 @@ def read(config_file, base_dir):
         }
     else:
         raise RuntimeError(f'Unsupported database type {config["backend"]["database"]["engine"]}')
+
+    AGENT_KEY = config["agent"]["key"]

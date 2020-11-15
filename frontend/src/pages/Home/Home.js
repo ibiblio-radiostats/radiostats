@@ -10,15 +10,10 @@ import Paper from '@material-ui/core/Paper';
 import FilterModal from './FilterModal';
 import ArrowDropDownBtn from './ArrowDropDownBtn';
 import TablePagination from '@material-ui/core/TablePagination';
-import { sortCost, sortMonth, sortYear, sortStations } from './Sort';
+import { sortCost, sortMonth, sortYear, sortStations } from '../../functions/Sort';
+import { addKeys } from '../../functions/Bills';
 import axios from 'axios'
 import './Home.css';
-
-// Retrieving the month and year.
-const monthNumToName = ["January", "February", "March",
-                        "April"  , "May"     , "June",
-                        "July"   , "August"  , "September",
-                        "October", "November", "December"]
 
 export default class Home extends React.Component {
     constructor(props) {
@@ -27,16 +22,16 @@ export default class Home extends React.Component {
             bills: [],
             page: 0,
             rowsPerPage: 7,
-            categorySelected: {
-                "stations": "desc",
-                "month": "desc",
-                "year": "desc",
-                "bill_transit": "desc",
-                "cost" : "desc",
-                "audit_status": "desc"
-            },
             previousCategory: "",
             user: "",
+            categorySelected: {
+                "audit_status": "desc",
+                "bill_transit": "desc",
+                "stations": "desc",
+                "month"   : "desc",
+                "year"    : "desc",
+                "cost"    : "desc",
+            },
         };
         this.applyFilter = this.applyFilter.bind(this);
         this.sortCategory = this.sortCategory.bind(this);
@@ -45,28 +40,27 @@ export default class Home extends React.Component {
     }
 
     async componentDidMount() {
-        var user = localStorage.getItem('user');
         // Axios call for bills.
-        const response = await axios.get(`${window._env_.BACKEND_BASE_URL}api/usage/`, {
+        var user = localStorage.getItem('user');
+        try {
+            await axios.get(`${window._env_.BACKEND_BASE_URL}api/usage/`, {
             headers: {
                 Authorization: `Token ${user}`
             }
-        });
-
-        // Iterating and inserting new keys.
-        for (var i = 0; i < response.data.length; i++) {
-            // Adding new keys [month], [year], and [cost] to the data.
-            var date = new Date(response.data[i].bill_start);
-            response.data[i].month = monthNumToName[date.getMonth()];
-            response.data[i].year = date.getFullYear();
-            response.data[i].cost = (response.data[i].bill_transit * response.data[i].cost_mult).toFixed(2)
+            }).then((res => {
+                // Adding additional keys.
+                res.data = addKeys(res.data);
+        
+                // Setting new state.
+                this.setState({
+                    bills: res.data,
+                    user: user,
+                })
+            }));
+        } catch(e) {
+            // console.log(e);
         }
 
-        // Setting new state.
-        this.setState({
-            bills: response.data,
-            user: user,
-        })
     }
 
     // Individual sorts on categories.
@@ -94,16 +88,12 @@ export default class Home extends React.Component {
             default:
                 var response = await axios.get(`${window._env_.BACKEND_BASE_URL}api/usage/?order_by=${category}:${sort}`, {
                     headers: {
-                        Authorization: `Token ${this.props.user}`
+                        Authorization: `Token ${this.state.user}`
                     }
                 })
-                // Adding new keys [month], [year], and [cost] to the data.
-                for (var i = 0; i < response.data.length; i++) {
-                    var date = new Date(response.data[i].bill_start);
-                    response.data[i].month = monthNumToName[date.getMonth()];
-                    response.data[i].year = date.getFullYear();
-                    response.data[i].cost = (response.data[i].bill_transit * response.data[i].cost_mult).toFixed(2)
-                }
+                
+                // Adding additional keys.
+                response.data = addKeys(response.data);
                 sortedBills = response.data;
             }
 
@@ -142,14 +132,9 @@ export default class Home extends React.Component {
                 Authorization: `Token ${this.state.user}`
             }
         });
-        // Adding new keys.
-        for (var i = 0; i < response.data.length; i++) {
-            // Adding new keys [month], [year], and [cost] to the data.
-            var date = new Date(response.data[i].bill_start);
-            response.data[i].month = monthNumToName[date.getMonth()];
-            response.data[i].year = date.getFullYear();
-            response.data[i].cost = (response.data[i].bill_transit * response.data[i].cost_mult).toFixed(2)
-        }
+
+        // Adding additional keys.
+        response.data = addKeys(response.data);
 
         // Setting the state to be the filtered bills.
         this.setState({

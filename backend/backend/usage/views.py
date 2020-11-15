@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from rest_framework import routers, viewsets, status
 from rest_framework.response import Response
+from backend.settings import AGENT_KEY
 from backend.usage.models import Report, Station
 from backend.usage.serializers import ReportSerializer, StationSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
+from rest_framework.views import APIView
+
 import datetime
 # Create your views here.
 
@@ -16,7 +19,7 @@ class ReportViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             queryset = Report.objects.all()
             approval = self.request.query_params.get("approval",None)
-        else: 
+        else:
             id = self.request.user.userinfo.sid
             queryset = Report.objects.filter(sid=id)
             approval = None
@@ -34,7 +37,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(bill_start__range=(start_dt,end_dt))
         if approval is not None and self.request.user.is_superuser:
             queryset = queryset.filter(audit_status__in=['PENDING_APPROVAL','UNUSABLE'])
-        else: 
+        else:
             queryset = queryset.exclude(audit_status='PENDING_APPROVAL').exclude(
                 audit_status='UNUSABLE')
 
@@ -61,7 +64,7 @@ class ReportViewSet(viewsets.ModelViewSet):
                 return Response(data,status=204)
             else:
                 return Response(status=404)
-        else: 
+        else:
             return Response('Not Admin',status=403)
 
 class StationViewSet(viewsets.ModelViewSet):
@@ -69,3 +72,44 @@ class StationViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Station.objects.all()
+
+class AgentSubmit(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        if 'HTTP_AUTHORIZATION' not in request.META:
+            return Response(status=401)
+        elif request.META['HTTP_AUTHORIZATION'] != AGENT_KEY:
+            return Response(status=403)
+        data = request.data.copy()
+        serializer = ReportSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+class AgentReportQuery(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, *args, **kwargs):
+        if 'HTTP_AUTHORIZATION' not in request.META:
+            return Response(status=401)
+        elif request.META['HTTP_AUTHORIZATION'] != AGENT_KEY:
+            return Response(status=403)
+        reports = Report.objects.all()
+        serializer = ReportSerializer(reports, many=True)
+        return Response(serializer.data)
+
+class AgentStationQuery(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, *args, **kwargs):
+        if 'HTTP_AUTHORIZATION' not in request.META:
+            return Response(status=401)
+        elif request.META['HTTP_AUTHORIZATION'] != AGENT_KEY:
+            return Response(status=403)
+        reports = Station.objects.all()
+        serializer = StationSerializer(reports, many=True)
+        return Response(serializer.data)

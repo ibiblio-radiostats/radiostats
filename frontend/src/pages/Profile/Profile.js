@@ -7,7 +7,7 @@ export default class Profile extends React.Component {
     render() {
         return (
             <div className="profilePage">
-                <Header user={this.props.user}/>
+                <Header/>
                 <div className="infoContainer">
                     <div className="basicInfoContainer">
                         <h2> Basic Info </h2>

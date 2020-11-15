@@ -17,8 +17,9 @@ import backend.config_reader
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-CONFIG_PATH = os.environ['CONFIG_PATH']
-if not CONFIG_PATH:
+if 'CONFIG_PATH' in os.environ:
+    CONFIG_PATH = os.environ['CONFIG_PATH']
+else:
     CONFIG_PATH = BASE_DIR.parent / "config.yml"
 
 backend.config_reader.read(CONFIG_PATH, BASE_DIR)
@@ -29,10 +30,13 @@ from backend.config_reader import (
     CORS_ORIGIN_WHITELIST,
     ALLOWED_HOSTS,
     DATABASES,
+    AGENT_KEY,
+    BACKEND_PATH,
 )
 
 SITE_ID = 1
 
+FORCE_SCRIPT_NAME = BACKEND_PATH
 
 # Application definition
 
@@ -141,5 +145,5 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = BACKEND_PATH + 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "../static") if DEBUG else "/static"
