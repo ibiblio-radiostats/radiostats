@@ -26,7 +26,7 @@ class StationSerializer(serializers.ModelSerializer):
         model = Station
         fields = '__all__'
 
-class EmailSerializer(serializers.Serializer):
+class ReportIdSerializer(serializers.Serializer):
     reports = serializers.ListField(
         child=serializers.IntegerField()
     )
