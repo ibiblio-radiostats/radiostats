@@ -53,7 +53,7 @@ def tabulate_single(id, station, yearmonth):
 
 	for csv in result_files:
 		df = df.append(pd.read_csv(csv), ignore_index = True)
-
+		## need to get 95% for each mount and sum 
 		report.station = station
 		report.yearmonth = yearmonth
 		report.usage += df['bandwidth'].quantile(.95)

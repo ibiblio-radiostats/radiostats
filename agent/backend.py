@@ -9,6 +9,8 @@ from config import BACKEND_HOST, BACKEND_PORT, BACKEND_TLS, BACKEND_PATH, AGENT_
 from datetime import date, datetime
 from loguru import logger
 from report import Report
+import os 
+import pandas as pd 	
 
 backend_protocol_scheme = "https" if BACKEND_TLS else "http"
 backend_api_root = backend_protocol_scheme + '://' + BACKEND_HOST + ':' + str(BACKEND_PORT) + '/'
@@ -52,5 +54,8 @@ def send_report(report):
 	bill_end = date(report.yearmonth[0], report.yearmonth[1], lastday).strftime("%Y-%m-%dT23:59:59Z")
 
 	data = {'report_dtm': datetime.utcnow(), 'bill_start': bill_start, 'bill_end': bill_end, 'bill_transit': int(report.usage), 'cost_mult': 0.1, 'sid': sid}
+	report = pd.DataFrame(data).to_csv(r'temp_report.csv')
+	files={'report': open('temp_report.csv','rb')}
 	url = backend_api_root + 'api/usage/agent/submit/'
-	requests.post(url, data=data, headers={'Authorization': AGENT_KEY})
+	requests.post(url, files=files,data=data, headers={'Authorization': AGENT_KEY})
+	os.remove(r'./temp_report.csv')

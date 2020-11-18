@@ -12,7 +12,9 @@ import datetime
 from backend import settings
 import pandas as pd 
 import io
-
+import requests
+from rest_framework.renderers import JSONRenderer
+import json
 # Create your views here.
 
 class ReportViewSet(viewsets.ModelViewSet):
@@ -114,7 +116,10 @@ class AgentResubmit(APIView):
             files = Report.objects.filter(pk__in=data.get('reports'))
             serializer = ReportSerializer(files,many=True)
             ### add post request implementation here. change response
-            return Response(serializer.data)
+            url = 'http://127.0.0.1:9000/resubmit'
+            convert = json.dumps(serializer.data)
+            r = requests.post(url,json=convert)
+            return Response(r.status_code)
 
 class AgentReportQuery(APIView):
     authentication_classes = []
@@ -149,6 +154,7 @@ class EmailReportView(APIView):
             serializer = ReportIdSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             data = request.data.copy()
+            month = datetime.datetime.now().strftime('%B')
             ##Pandas manipulation to get all report data together
             df = pd.DataFrame()
             files = Report.objects.filter(pk__in=data.get('reports'))
@@ -156,11 +162,10 @@ class EmailReportView(APIView):
                 file_path = stuff.report.path
                 df = pd.concat([df, pd.read_csv(file_path)])
             # Currently adding the report to the local file system at /sils_reports
-            report = './sils_reports/{}_Reports.csv'.format('November')
+            report = './sils_reports/{}_Reports.csv'.format(month)
             df.to_csv(report)
 
             #emailing service
-            month = datetime.datetime.now().strftime('%B')
             # prob can get this info from the report csv name.
             subject = 'Report Audit for {}'.format(month)
             body = 'Attached in the email is the report billable transit for {}'.format(month)
