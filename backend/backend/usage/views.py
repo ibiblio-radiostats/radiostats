@@ -3,7 +3,7 @@ from rest_framework import routers, viewsets, status
 from rest_framework.response import Response
 from backend.settings import AGENT_KEY
 from backend.usage.models import Report, Station
-from backend.usage.serializers import EmailSerializer, StationSerializer, ReportSerializer
+from backend.usage.serializers import ReportIdSerializer, StationSerializer, ReportSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
@@ -106,21 +106,15 @@ class AgentSubmit(APIView):
         return Response(status=400)
 
 class AgentResubmit(APIView):
-    authentication_classes = []
-    permission_classes = []
-
     def post(self, request, *args, **kwargs):
-        if 'HTTP_AUTHORIZATION' not in request.META:
-            return Response(status=401)
-        elif request.META['HTTP_AUTHORIZATION'] != AGENT_KEY:
-            return Response(status=403)
-        data = request.data.copy()
-        serializer = EmailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        files = Report.objects.filter(pk__in=data.get('reports'))
-        serializer = ReportSerializer(files,many=True)
-        ### add post request implementation here. change response
-        return Response(serializer.data)
+        if self.request.user.is_superuser:
+            data = request.data.copy()
+            serializer = ReportIdSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            files = Report.objects.filter(pk__in=data.get('reports'))
+            serializer = ReportSerializer(files,many=True)
+            ### add post request implementation here. change response
+            return Response(serializer.data)
 
 class AgentReportQuery(APIView):
     authentication_classes = []
