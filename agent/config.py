@@ -1,7 +1,16 @@
 import os
 import ruamel.yaml as yaml
 
-with open(os.environ['CONFIG_PATH'], mode='r') as file:
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+
+if 'CONFIG_PATH' in os.environ:
+    CONFIG_PATH = os.environ['CONFIG_PATH']
+else:
+    CONFIG_PATH = BASE_DIR.parent / "config.yml"
+
+with open(CONFIG_PATH, mode='r') as file:
 	try:
 	    config = yaml.safe_load(file)
 	except yaml.YAMLError as exc:
@@ -22,8 +31,9 @@ DATA_CACHE_SECONDS = config["agent"]["cache_ttl"] # 240
 DATA_DIR = config["agent"]["data_dir"]
 
 AGENT_KEY = config["agent"]["key"]
+AGENT_PORT = config["agent"]["port"]
 
-with open(os.path.join(os.path.dirname(os.environ['CONFIG_PATH']), 'mounts.yml'), mode='r') as file:
+with open(os.path.join(os.path.dirname(CONFIG_PATH), 'mounts.yml'), mode='r') as file:
 	try:
 		mounts = yaml.safe_load(file)
 	except yaml.YAMLError as exc:

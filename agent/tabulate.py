@@ -5,7 +5,7 @@ import datetime as dt
 import os
 import pandas as pd
 
-from backend import report_already_present, send_report
+from backend import report_already_present, resend_report, send_report
 from calendar import monthrange
 from collections import defaultdict
 from config import DATA_DIR, MOUNTS
@@ -20,9 +20,52 @@ def is_month_passed(today, yearmonth):
 def find_matching_station(mount):
 	for station in MOUNTS.keys():
 		if mount in MOUNTS[station]:
-			return station
+			return station.lower()
 	return ''
 
+def tabulate_single(id, station, yearmonth):
+	today = datetime.utcnow().date()
+
+	report = Report()
+	report.station = station
+	report.yearmonth = yearmonth
+
+	mounts = [f.name for f in os.scandir(DATA_DIR) if f.is_dir()]
+	for mount in mounts:
+		# Ignore mounts that don't belong to the station of interest
+		if station != find_matching_station(mount): continue
+
+		# Get a list of files to process for a valid mount
+		path = os.path.join(DATA_DIR, mount)
+		files = [f.name for f in os.scandir(path)]
+
+		result_files = []
+
+		for file in files:
+			# Disregard files that aren't csvs
+			if not file.endswith('.csv'): continue
+
+			# Extract the year and month from the filename of csvs
+			# 2020-07-26.csv thus yields the tuple (2020, 07)
+			fileyearmonth = (int(file[:4]), int(file[5:7]))
+
+			# Disregard files that aren't for the yearmonth of interest
+			if fileyearmonth != yearmonth: continue
+
+			# Only process files that correspond to months that have fully passed
+			if is_month_passed(today, fileyearmonth):
+				filepath = os.path.join(path, file)
+				months[fileyearmonth].append(filepath)
+
+		df = pd.DataFrame(columns = ['bandwidth', 'listeners', 'time'])
+		for csv in result_files:
+			df = df.append(pd.read_csv(csv), ignore_index = True)
+		report.mounts.append((mount, df['bandwidth'].quantile(.95) / 1048576))
+
+	# Items in report.mounts are tuples of the form (mount, mount_usage)
+	# Usage here is measured in Mbps, so divide by 1024^2
+	report.usage = round(sum([mount[1] for mount in report.mounts]), 10)
+	resend_report(report)
 
 def tabulate():
 	today = datetime.utcnow().date()
