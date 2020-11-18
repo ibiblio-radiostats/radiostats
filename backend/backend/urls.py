@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.conf.urls import url
 from django.urls import include, path
 from rest_framework import permissions, routers
-from backend.usage.views import ReportViewSet, StationViewSet, AgentSubmit, AgentReportQuery, AgentStationQuery,EmailReportView
+from backend.usage.views import ReportViewSet, StationViewSet, AgentSubmit, AgentReportQuery, AgentStationQuery,EmailReportView,AgentResubmit
 from backend.users.views import UserInfoViewSet,UserViewSet,ChangePassword,ChangeUserInfo
 from drf_yasg2.views import get_schema_view
 from drf_yasg2 import openapi
@@ -42,6 +42,8 @@ urlpatterns = [
     path('api/user/change_password/',ChangePassword.as_view(), name='change_password'),
     path('api/user/change_userinfo/',ChangeUserInfo.as_view(), name='change_userinfo'),
     path('api/usage/agent/submit/', AgentSubmit.as_view(), name='agent_submit'),
+    path('api/usage/agent/submit/<int:pk>/', AgentSubmit.as_view(), name='agent_submit'),
+    path('api/usage/agent/resubmit/', AgentResubmit.as_view(), name='agent_resubmit'),
     path('api/usage/agent/reports/', AgentReportQuery.as_view(), name='agent_report_query'),
     path('api/usage/agent/stations/', AgentStationQuery.as_view(), name='agent_station_query'),
     path('api/upload/',EmailReportView.as_view(), name='report_upload'),

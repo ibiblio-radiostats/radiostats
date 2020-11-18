@@ -85,6 +85,36 @@ class AgentSubmit(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+    
+    def patch(self,request,*args, **kwargs):
+        if 'HTTP_AUTHORIZATION' not in request.META:
+            return Response(status=401)
+        elif request.META['HTTP_AUTHORIZATION'] != AGENT_KEY:
+            return Response(status=403)
+        pk = kwargs['pk']
+        report = Report.objects.get(pk=pk)
+        serializer = ReportSerializer(report, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=204)
+        return Response(status=400)
+
+class AgentResubmit(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        if 'HTTP_AUTHORIZATION' not in request.META:
+            return Response(status=401)
+        elif request.META['HTTP_AUTHORIZATION'] != AGENT_KEY:
+            return Response(status=403)
+        data = request.data.copy()
+        serializer = EmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        files = Report.objects.filter(pk__in=data.get('reports'))
+        serializer = ReportSerializer(files,many=True)
+        ### add post request implementation here. change response
+        return Response(serializer.data)
 
 class AgentReportQuery(APIView):
     authentication_classes = []
