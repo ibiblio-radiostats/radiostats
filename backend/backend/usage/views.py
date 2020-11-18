@@ -125,10 +125,9 @@ class EmailReportView(APIView):
             serializer = EmailSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             data = request.data.copy()
-
             ##Pandas manipulation to get all report data together
             df = pd.DataFrame()
-            files = Report.objects.filter(pk__in=data.getlist('reports'))
+            files = Report.objects.filter(pk__in=data.get('reports'))
             for stuff in files: 
                 file_path = stuff.report.path
                 df = pd.concat([df, pd.read_csv(file_path)])
