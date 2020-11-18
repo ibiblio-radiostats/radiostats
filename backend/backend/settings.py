@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if 'CONFIG_PATH' in os.environ:
     CONFIG_PATH = os.environ['CONFIG_PATH']
 else:
-    CONFIG_PATH = BASE_DIR.parent / "config.dev.yml"
+    CONFIG_PATH = BASE_DIR.parent / "config.yml"
 
 backend.config_reader.read(CONFIG_PATH, BASE_DIR)
 
