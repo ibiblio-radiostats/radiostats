@@ -146,7 +146,7 @@ class EmailReportView(APIView):
 
     def post(self, request, *args, **kwargs):
         if self.request.user.is_superuser:
-            serializer = EmailSerializer(data=request.data)
+            serializer = ReportIdSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             data = request.data.copy()
             ##Pandas manipulation to get all report data together
