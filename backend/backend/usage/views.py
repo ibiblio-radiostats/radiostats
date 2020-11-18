@@ -3,17 +3,21 @@ from rest_framework import routers, viewsets, status
 from rest_framework.response import Response
 from backend.settings import AGENT_KEY
 from backend.usage.models import Report, Station
-from backend.usage.serializers import ReportSerializer, StationSerializer
+from backend.usage.serializers import EmailSerializer, StationSerializer, ReportSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
-
+from django.core.mail import EmailMessage
 import datetime
+from backend import settings
+import pandas as pd 
+import io
+
 # Create your views here.
 
 class ReportViewSet(viewsets.ModelViewSet):
     serializer_class = ReportSerializer
-    http_method_names = ['get', 'patch', 'head','post']
+    http_method_names = ['get', 'patch', 'head']
 
     def get_queryset(self):
         if self.request.user.is_superuser:
@@ -113,3 +117,33 @@ class AgentStationQuery(APIView):
         reports = Station.objects.all()
         serializer = StationSerializer(reports, many=True)
         return Response(serializer.data)
+
+class EmailReportView(APIView): 
+
+    def post(self, request, *args, **kwargs):
+        if self.request.user.is_superuser:
+            serializer = EmailSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            data = request.data.copy()
+
+            ##Pandas manipulation to get all report data together
+            df = pd.DataFrame()
+            files = Report.objects.filter(pk__in=data.getlist('reports'))
+            for stuff in files: 
+                file_path = stuff.report.path
+                df = pd.concat([df, pd.read_csv(file_path)])
+            # Currently adding the report to the local file system at /sils_reports
+            report = './sils_reports/{}_Reports.csv'.format('November')
+            df.to_csv(report)
+
+            #emailing service
+            month = datetime.datetime.now().strftime('%B')
+            # prob can get this info from the report csv name.
+            subject = 'Report Audit for {}'.format(month)
+            body = 'Attached in the email is the report billable transit for {}'.format(month)
+            to = ['silsemail']
+            email_from = settings.EMAIL_HOST_USER
+            email = EmailMessage(subject,body,email_from,to)
+            email.attach_file(report)
+            email.send()
+            return Response('Report Sent',status=200)
