@@ -36,6 +36,11 @@ def report_already_present(station, yearmonth):
 
 	return False
 
+def resend_report(id, report):
+	data = {'report_dtm': datetime.utcnow(), 'bill_transit': int(report.usage)}
+	url = backend_api_root + f'api/usage/agent/resubmit/{id}/'
+	requests.patch(url, data=data, headers={'Authorization': AGENT_KEY})
+
 def send_report(report):
 	sid = get_sid_from_name(report.station)
 	if sid == -1:

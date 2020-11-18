@@ -5,7 +5,7 @@ import datetime as dt
 import os
 import pandas as pd
 
-from backend import report_already_present, send_report
+from backend import report_already_present, resend_report, send_report
 from calendar import monthrange
 from collections import defaultdict
 from config import DATA_DIR, MOUNTS
@@ -22,6 +22,43 @@ def find_matching_station(mount):
 		if mount in MOUNTS[station]:
 			return station
 	return ''
+
+def tabulate_single(id, station, yearmonth):
+	today = datetime.utcnow().date()
+
+	result_files = []
+
+	mounts = [f.name for f in os.scandir(DATA_DIR) if f.is_dir()]
+	for mount in mounts:
+		mount_station = find_matching_station(mount)
+		if station == '':
+			logger.warning(f'Could not find station for mount {mount}')
+			continue
+
+		path = os.path.join(DATA_DIR, mount)
+		files = [f.name for f in os.scandir(path)]
+
+		for file in files:
+			if not file.endswith('.csv'): continue
+			fileyearmonth = (int(file[:4]), int(file[5:7]))
+
+			# Only process files that correspond to months that have fully passed
+			if is_month_passed(today, fileyearmonth):
+				filepath = os.path.join(path, file)
+				if mount_station.lower() == station.lower() and fileyearmonth == yearmonth:
+					result_files.append(filepath)
+
+	df = pd.DataFrame(columns = ['bandwidth', 'listeners', 'time'])
+	report = Report()
+
+	for csv in result_files:
+		df = df.append(pd.read_csv(csv), ignore_index = True)
+
+		report.station = station
+		report.yearmonth = yearmonth
+		report.usage += df['bandwidth'].quantile(.95)
+
+	resend_report(id, report)
 
 def tabulate():
 	today = datetime.utcnow().date()
