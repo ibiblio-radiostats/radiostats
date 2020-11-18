@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if 'CONFIG_PATH' in os.environ:
     CONFIG_PATH = os.environ['CONFIG_PATH']
 else:
-    CONFIG_PATH = BASE_DIR.parent / "config.yml"
+    CONFIG_PATH = BASE_DIR.parent / "config.dev.yml"
 
 backend.config_reader.read(CONFIG_PATH, BASE_DIR)
 
@@ -41,6 +41,7 @@ FORCE_SCRIPT_NAME = BACKEND_PATH
 # Application definition
 
 INSTALLED_APPS = [
+    'django_cleanup',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,6 +56,8 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     "rest_framework.authtoken",
     "allauth",
+    'allauth.account',
+    'allauth.socialaccount',
     'backend.usage',
     'backend.users',
 ]
@@ -147,3 +150,12 @@ USE_TZ = True
 
 STATIC_URL = BACKEND_PATH + 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "../static") if DEBUG else "/static"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'sils_reports')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'host_url'
+EMAIL_PORT = 000
+EMAIL_HOST_USER = 'some_email'
+EMAIL_HOST_PASSWORD = 'some_password'

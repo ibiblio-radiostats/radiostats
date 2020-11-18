@@ -123,7 +123,8 @@ class TestUsage(APITestCase):
         "bill_transit": 3,
         "cost_mult": "2.3000",
         "sid": 1,
-        "stations": "WCPE"
+        "stations": "WCPE",
+        'report': None
         }])
         self.client.credentials()
 
