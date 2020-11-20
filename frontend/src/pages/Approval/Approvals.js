@@ -170,7 +170,7 @@ export default class Approvals extends React.Component {
                 Authorization: `Token ${this.state.user}`
             },
             data: {
-                "reports": Object.keys(this.state.bills).map(Number)
+                "reports": Object.keys(this.state.billsSelected).map(Number)
             }
         }).catch((err) => {
             console.log(err);
@@ -199,7 +199,7 @@ export default class Approvals extends React.Component {
             variant="contained"
             id="approveButton"
             disabled={!Object.keys(this.state.billsSelected).length}
-            onClick={(e) => this.handleBill("PROCESSED", e)}>
+            onClick={(e) => this.handleBill("PROCESSING", e)}>
             Approve
         </Button>
 
