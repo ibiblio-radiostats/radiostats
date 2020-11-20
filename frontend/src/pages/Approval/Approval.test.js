@@ -46,7 +46,6 @@ describe("handle select all checkbox", () => {
 
         const checkAllBox = wrapper.find("#checkAllBox")
         checkAllBox.simulate('check', event)
-        // expect()
     })
 })
 

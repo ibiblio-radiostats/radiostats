@@ -72,7 +72,7 @@ export default class Approvals extends React.Component {
                 })
             })
         } catch(e) {
-            console.log(e);
+            // console.log(e);
         }
     }
 
@@ -146,7 +146,7 @@ export default class Approvals extends React.Component {
                     }
                 });
             } catch (e) {
-                console.log(e);
+                // console.log(e);
             }
 
             type === "UNUSABLE" ? newBills[id].audit_status = "UNUSABLE" : delete newBills[id];
@@ -215,7 +215,7 @@ export default class Approvals extends React.Component {
         </Button>
 
         let refreshButton = 
-        <IconButton color="primary" variant="contained" id="rejectButton" onClick={this.handleRefresh}>
+        <IconButton color="primary" variant="contained" id="refreshButton" onClick={this.handleRefresh}>
             <RefreshIcon/>
         </IconButton>
 
