@@ -7,8 +7,11 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import IconButton from '@material-ui/core/IconButton';
 import axios from 'axios';
 import './Approval.css';
 
@@ -25,11 +28,16 @@ export default class Approvals extends React.Component {
             bills: {},
             checked: {},
             billsSelected: {},
+            page: 0,
+            rowsPerPage: 7,
             user: ""
         };
         this.handleCheckBoxChange = this.handleCheckBoxChange.bind(this);
         this.handleCheckAll = this.handleCheckAll.bind(this);
+        this.handleRefresh = this.handleRefresh.bind(this);
         this.handleBill = this.handleBill.bind(this);
+        this.handleChangePage = this.handleChangePage.bind(this);
+        this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     }
 
     // Retrieves all bills when mounted.
@@ -56,7 +64,6 @@ export default class Approvals extends React.Component {
                     initChecked[res.data[i].id] = false;
                     initBills[res.data[i].id] = res.data[i];
                 }
-                console.log(initBills);
                 // Setting state.
                 this.setState({
                     bills: initBills,
@@ -154,6 +161,36 @@ export default class Approvals extends React.Component {
         });
     }
 
+    // Refresh the list of bills. 
+    async handleRefresh(event) {
+        await axios({
+            url: `${window._env_.BACKEND_BASE_URL}api/usage/agent/resubmit/`,
+            method: 'post',
+            headers: {
+                Authorization: `Token ${this.state.user}`
+            },
+            data: {
+                "reports": Object.keys(this.state.bills).map(Number)
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+    // Changes the page the user is browsing.
+    handleChangePage(event, newPage) {
+        this.setState({
+            page: newPage
+        })
+    }
+
+    // Changes the number of rows per page the user can browse.
+    handleChangeRowsPerPage(event) {
+        this.setState({
+            rowsPerPage: event.target.value
+        })
+    }
+
     render() {
         // Approve button.
         let approveButton =
@@ -177,6 +214,11 @@ export default class Approvals extends React.Component {
             Reject
         </Button>
 
+        let refreshButton = 
+        <IconButton color="primary" variant="contained" id="rejectButton" onClick={this.handleRefresh}>
+            <RefreshIcon/>
+        </IconButton>
+
         return (
             <div className="approvalPage">
                 <Header/>
@@ -190,7 +232,8 @@ export default class Approvals extends React.Component {
                                     <TableCell align="justify"> </TableCell>
                                     <TableCell align="justify"> </TableCell>
                                     <TableCell align="justify"> </TableCell>
-                                    <TableCell align="right"> {rejectButton} {approveButton} </TableCell>
+                                    <TableCell align="justify"> </TableCell>
+                                    <TableCell align="right"> {refreshButton} {rejectButton} {approveButton} </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableHead>
@@ -200,11 +243,14 @@ export default class Approvals extends React.Component {
                                     <TableCell id="header" align="justify">Month</TableCell>
                                     <TableCell id="header" align="justify">Year</TableCell>
                                     <TableCell id="header" align="justify">Bandwidth Usage</TableCell>
+                                    <TableCell id="header" align="justify">Status</TableCell>
                                     <TableCell id="header" align="right">Cost</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {Object.values(this.state.bills).map((bill) => (
+                                {Object.values(this.state.bills)
+                                .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
+                                .map((bill) => (
                                     <TableRow key={bill.id} style={{"backgroundColor": bill.audit_status === "UNUSABLE" ? "rgb(255,219,233)" : ""}}>
                                         <TableCell padding="checkbox" align="justify">
                                             <Checkbox
@@ -216,11 +262,21 @@ export default class Approvals extends React.Component {
                                         <TableCell align="justify">{bill.month}</TableCell>
                                         <TableCell align="justify">{bill.year}</TableCell>
                                         <TableCell align="justify">{bill.bill_transit}</TableCell>
+                                        <TableCell align="justify">{bill.audit_status}</TableCell>
                                         <TableCell align="right">{`$${bill.cost}`}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
+                        <TablePagination
+                            rowsPerPageOptions={[7]}
+                            component="div"
+                            count={Object.keys(this.state.bills).length}
+                            rowsPerPage={this.state.rowsPerPage}
+                            page={this.state.page}
+                            onChangePage={this.handleChangePage}
+                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        />
                     </TableContainer>
                 </div>
             </div>

@@ -6,10 +6,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import FilterModal from './FilterModal';
 import ArrowDropDownBtn from './ArrowDropDownBtn';
-import TablePagination from '@material-ui/core/TablePagination';
 import { sortCost, sortMonth, sortYear, sortStations } from '../../functions/Sort';
 import { addKeys } from '../../functions/Bills';
 import axios from 'axios'
