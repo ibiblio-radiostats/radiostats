@@ -6,6 +6,8 @@ def read(config_file, base_dir):
     global CORS_ORIGIN_WHITELIST
     global ALLOWED_HOSTS
     global DATABASES
+    global AGENT_HOST
+    global AGENT_PORT
     global AGENT_KEY
     global BACKEND_PATH
     with open(config_file, mode='r') as file:
@@ -47,4 +49,6 @@ def read(config_file, base_dir):
     else:
         raise RuntimeError(f'Unsupported database type {config["backend"]["database"]["engine"]}')
 
+    AGENT_HOST = config["agent"]["host"]
+    AGENT_PORT = config["agent"]["port"]
     AGENT_KEY = config["agent"]["key"]

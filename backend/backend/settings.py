@@ -31,6 +31,8 @@ from backend.config_reader import (
     ALLOWED_HOSTS,
     DATABASES,
     AGENT_KEY,
+    AGENT_HOST,
+    AGENT_PORT,
     BACKEND_PATH,
 )
 

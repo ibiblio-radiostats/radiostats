@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import routers, viewsets, status
 from rest_framework.response import Response
-from backend.settings import AGENT_KEY
+from backend.settings import AGENT_KEY, AGENT_HOST, AGENT_PORT
 from backend.usage.models import Report, Station
 from backend.usage.serializers import ReportIdSerializer, StationSerializer, ReportSerializer
 from rest_framework.response import Response
@@ -10,8 +10,11 @@ from rest_framework.views import APIView
 from django.core.mail import EmailMessage
 import datetime
 from backend import settings
-import pandas as pd 
+import pandas as pd
 import io
+import requests
+from rest_framework.renderers import JSONRenderer
+import json
 
 # Create your views here.
 
@@ -107,8 +110,9 @@ class AgentResubmit(APIView):
             serializer.is_valid(raise_exception=True)
             files = Report.objects.filter(pk__in=data.get('reports'))
             serializer = ReportSerializer(files,many=True)
-            ### add post request implementation here. change response
-            return Response(serializer.data)
+            url = 'http://' + AGENT_HOST + ':' + AGENT_PORT + '/resubmit'
+            r = requests.post(url, json.dumps(serializer.data))
+            return Response(status=r.status_code)
 
 class AgentReportQuery(APIView):
     authentication_classes = []
