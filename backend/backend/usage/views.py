@@ -15,6 +15,10 @@ import io
 import requests
 from rest_framework.renderers import JSONRenderer
 import json
+import numpy as np
+import os
+from collections import defaultdict
+import re
 
 # Create your views here.
 
@@ -147,24 +151,49 @@ class EmailReportView(APIView):
             serializer = ReportIdSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             data = request.data.copy()
-            ##Pandas manipulation to get all report data together
-            df = pd.DataFrame()
+            #Pandas manipulation to get all report data together
             files = Report.objects.filter(pk__in=data.get('reports'))
-            for stuff in files: 
-                file_path = stuff.report.path
-                df = pd.concat([df, pd.read_csv(file_path)])
-            # Currently adding the report to the local file system at /sils_reports
-            report = './sils_reports/{}_Reports.csv'.format('November')
-            df.to_csv(report)
+            month_dict = defaultdict(list)
+
+            #creates list of months and the associated file paths for each station
+            for reports in files:
+                print(reports.report.path)
+                month = re.search(r'(?<=-).*(?=_)', reports.report.path).group(0)
+                file_path = reports.report.path
+                month_dict[month].append(file_path)
+
+            excel_filepath= []
+            for month,reports in month_dict.items():
+                print(month,reports)
+                df = pd.DataFrame()
+                for file_paths in reports:
+                    month_name = datetime.date(2020, int(month), 1).strftime('%B')
+                    print(month_name)
+                    df = pd.concat([df, pd.read_excel(file_paths)])
+                    total_cost = df['total charges'].sum()
+                    print('hello: ',total_cost)
+                    rows = pd.Series(['ibiblio',np.nan,np.nan,total_cost], index = df.columns)
+                    df = df.append(rows,ignore_index=True)
+                    print(df)
+                # Currently adding the report to the local file system at /sils_reports
+                report = './sils_reports/{}_Reports.xlsx'.format(month_name)
+                df.to_excel(report,index=False)
+                excel_filepath.append(report)
+            print(excel_filepath)
+
 
             #emailing service
             month = datetime.datetime.now().strftime('%B')
             # prob can get this info from the report csv name.
-            subject = 'Report Audit for {}'.format(month)
-            body = 'Attached in the email is the report billable transit for {}'.format(month)
-            to = ['silsemail']
+            subject = 'Report Audit for the Month'
+            body = 'Attached in the email is the monthly excel report(s) for billable transit'
+            #change this to the email you are sending to
+            to = ['your_email@test.com']
             email_from = settings.EMAIL_HOST_USER
             email = EmailMessage(subject,body,email_from,to)
-            email.attach_file(report)
+            for report in excel_filepath:
+                email.attach_file(report)
             email.send()
+            for report in excel_filepath:
+                os.remove(report)
             return Response('Report Sent',status=200)
