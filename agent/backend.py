@@ -4,6 +4,7 @@
 import dateutil.parser
 import requests
 import xlsxwriter
+import os
 
 from calendar import monthrange
 from config import BACKEND_HOST, BACKEND_PORT, BACKEND_TLS, BACKEND_PATH, AGENT_KEY, FRONTEND_HOST, FRONTEND_PORT, FRONTEND_TLS
@@ -78,3 +79,4 @@ def send_report(report):
 		print('Post failed:')
 		print(f'Station: {report.station}, Yearmonth: {report.yearmonth}, Usage: {report.usage}, Mounts: {report.mounts}')
 		print(response.content)
+	os.remove(f'{report.station}_{report.yearmonth[0]}-{report.yearmonth[1]}.xlsx')
