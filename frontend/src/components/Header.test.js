@@ -18,27 +18,27 @@ configure({ adapter: new Adapter() });
 
 describe("render dynamic user title", () => {
     it("logging in as radio station user", () => {
-        localStorage.setItem("userTitle", "Radio User")
+        sessionStorage.setItem("userTitle", "Radio User")
         const { queryByTestId } = render(<BrowserRouter> <Header /> </BrowserRouter>)
         expect(queryByTestId("greetingsContainer")).toHaveTextContent("Hi Radio User!")
     })
 
     it("logging in as ibiblio admin", () => {
-        localStorage.setItem("userTitle", "Admin")
+        sessionStorage.setItem("userTitle", "Admin")
         const { queryByTestId } = render(<BrowserRouter> <Header /> </BrowserRouter>)
         expect(queryByTestId("greetingsContainer")).toHaveTextContent("Hi Admin!")
     })
 })
 
 describe("logging out", () => {
-    it("clears items in localStorage", () => {
-        localStorage.setItem("user", "alowhrnskkapslllwqqoijan")
-        localStorage.setItem("userTitle", "Admin")
+    it("clears items in sessionStorage", () => {
+        sessionStorage.setItem("user", "alowhrnskkapslllwqqoijan")
+        sessionStorage.setItem("userTitle", "Admin")
 
         const wrapper = shallow(<Header />)
         wrapper.find('#logoutBtn').simulate('click')
         
-        expect(localStorage.getItem("user")).toBe(null);
-        expect(localStorage.getItem("userTitle")).toBe(null);
+        expect(sessionStorage.getItem("user")).toBe(null);
+        expect(sessionStorage.getItem("userTitle")).toBe(null);
     })
 })

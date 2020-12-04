@@ -15,7 +15,7 @@ function Alert(props) {
 }
 
 export default function ChangePassword() {
-    const user = localStorage.getItem("user");
+    const user = sessionStorage.getItem("user");
     const [toProfile, setToProfile] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [error, setError] = React.useState(false);

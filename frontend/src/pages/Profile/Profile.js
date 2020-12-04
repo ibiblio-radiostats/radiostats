@@ -14,7 +14,7 @@ const navStyle = {
 }
 
 export default function Profile() {
-    const userTitle = localStorage.getItem("userTitle");
+    const userTitle = sessionStorage.getItem("userTitle");
     const [edit, setEdit] = React.useState(false);
     const [firstName, setFirstName] = React.useState("");
     const [lastName, setLastName] = React.useState("");
@@ -23,7 +23,7 @@ export default function Profile() {
     useEffect(() => {
         async function fetchData() {
             // Setting basic information.
-            var user = localStorage.getItem("user");
+            var user = sessionStorage.getItem("user");
             await axios({
                 url: `${window._env_.BACKEND_BASE_URL}api/user/`,
                 method: 'get',
@@ -66,7 +66,7 @@ export default function Profile() {
 
     const handleSave = async (event) => {
         if (edit) {
-            var user = localStorage.getItem("user");
+            var user = sessionStorage.getItem("user");
             if (edit) {
                 await axios({
                     url: `${window._env_.BACKEND_BASE_URL}api/user/change_userinfo/`,
@@ -116,7 +116,7 @@ export default function Profile() {
                         <TextField id="password"  label="Password" value="*********"disabled={true}/>
                     </span>
                     <span className="userContainer">
-                        <TextField id="user" label="User" value={userTitle} disabled={true}/>
+                        <TextField id="user" label="User" value={userTitle ? userTitle : ""} disabled={true}/>
                     </span>
                     <div>
                         <Link to="/changepassword" style={navStyle}>

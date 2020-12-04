@@ -18,17 +18,12 @@
 
 .loginFormFieldContainer {
     margin-top: 1.5rem;
-    margin-bottom: 1rem;
 }
 
 .loginFormField {
     padding-top: 1rem;
     padding-bottom: 0.5rem;
     position: relative;
-}
-
-.buttonContainer {
-    padding-top: 1rem;
 }
 
 .loginBtn {

@@ -7,10 +7,6 @@ import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css'
 
-const navStyle = {
-    "textDecoration": "none",
-}
-
 export default class Login extends React.Component {
     constructor(props) {
         super();
@@ -25,19 +21,21 @@ export default class Login extends React.Component {
         this.handleLogin    = this.handleLogin.bind(this);
     }
 
-    // Save username.
+    // Saving username.
     handleUsername(event) {
         this.setState({
             username: event.target.value
         })
     }
 
+    // Saving password.
     handlePassword(event) {
         this.setState({
             password: event.target.value
         })
     }
 
+    // Using the current username and password to verify if the user exists.
     handleLogin = async () => {
         // Retrieving the user's token.
         try {
@@ -62,8 +60,8 @@ export default class Login extends React.Component {
 
                 // Saving [user] and [userTitle] and updating the screen.
                 userTitle = userTitle.data[0].role === "STATION_USER" ? "Radio User" : "Admin";
-                localStorage.setItem('user', user);
-                localStorage.setItem('userTitle', userTitle);
+                sessionStorage.setItem('user', user);
+                sessionStorage.setItem('userTitle', userTitle);
                 this.setState({
                     toHome: true
                 });
@@ -121,14 +119,13 @@ export default class Login extends React.Component {
                     <Button variant="contained" color="primary" className="loginBtn" onClick={this.handleLogin}>
                         Login
                     </Button>
-                    <Link to="" style={navStyle}>
+                    <Link to="" style={{"textDecoration": "none"}}>
                         <Button id="forgotPasswordBtn" variant="contained" color="default" className="forgotPasswordBtn">
                             Forgot Password
                         </Button>
                     </Link>
                 </div>
             </div>
-
             </>
         );
     }

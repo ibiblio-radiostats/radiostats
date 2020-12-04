@@ -18,18 +18,18 @@ export default class Header extends React.Component {
 
     // Logs the user out.
     async handleLogout(event) {
-        localStorage.clear();
+        sessionStorage.clear();
     }
 
     render() {
-        var userTitle = localStorage.getItem('userTitle');
+        var userTitle = sessionStorage.getItem('userTitle');
         return (
             <div className="headerContainer">
-                <img src={ibiblioLogo} alt="Ibiblio" className="imageContainer"/>
+                <img src={ibiblioLogo} alt="ibiblio" className="imageContainer"/>
 
                 <nav className="navBarContainer">
                     <Link to="/home" style={navStyle}> Home </Link>
-                    { (userTitle !== "Radio User" && <Link to="/Approvals" style={navStyle}> Approvals </Link>) || null }
+                    { (userTitle !== "Radio User" && <Link to="/approvals" style={navStyle}> Approvals </Link>) || null }
                     <Link to="/profile" style={navStyle}> Profile </Link>
                 </nav>
 

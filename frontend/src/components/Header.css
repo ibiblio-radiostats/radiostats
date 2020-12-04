@@ -19,16 +19,17 @@
 }
 
 .greetingsContainer {
-    position: relative;
+    position: absolute;
     font-family: "Roboto";
     font-size: 1.5vw;
+    right: 12%;
     margin-top: 2%;
-    margin-left: 50%;
 }
 
 .logoutBtnContainer {
-    position: relative;
+    position: absolute;
     float: right;
+    right: 4.1%;
     width: 8%;
 }
 

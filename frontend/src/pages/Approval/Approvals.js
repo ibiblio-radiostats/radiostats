@@ -10,8 +10,6 @@ import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import IconButton from '@material-ui/core/IconButton';
 import axios from 'axios';
 import './Approval.css';
 
@@ -29,12 +27,12 @@ export default class Approvals extends React.Component {
             checked: {},
             billsSelected: {},
             page: 0,
-            rowsPerPage: 7,
+            rowsPerPage: 5,
             user: ""
         };
         this.handleCheckBoxChange = this.handleCheckBoxChange.bind(this);
         this.handleCheckAll = this.handleCheckAll.bind(this);
-        this.handleRefresh = this.handleRefresh.bind(this);
+        this.handleResubmit = this.handleResubmit.bind(this);
         this.handleBill = this.handleBill.bind(this);
         this.handleChangePage = this.handleChangePage.bind(this);
         this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
@@ -43,7 +41,7 @@ export default class Approvals extends React.Component {
     // Retrieves all bills when mounted.
     async componentDidMount() {
         // Axios call for inital bills.
-        var user = localStorage.getItem('user');
+        var user = sessionStorage.getItem('user');
         var initChecked = {};
         var initBills = {};
         try {
@@ -76,7 +74,7 @@ export default class Approvals extends React.Component {
         }
     }
 
-    // Called once a checkbox is checked. Displays the status buttons.
+    // Called once a checkbox is checked.
     handleCheckBoxChange(id, event) {
         // Changing the checked state of the caller.
         var newChecked = JSON.parse(JSON.stringify(this.state.checked));
@@ -85,23 +83,16 @@ export default class Approvals extends React.Component {
         // Creating a copy of [billsSelected].
         var newBillsSelected = JSON.parse(JSON.stringify(this.state.billsSelected));
 
-        // If the number of buttons selected is 0, hide the buttons.
-        if (event.target.checked) {
-            newBillsSelected[id] = 1;
-            // Setting new state.
-            this.setState({
-                billsSelected: newBillsSelected,
-                checked: newChecked
-            })
+        // Checking/un-checking the box.
+        event.target.checked ? 
+            newBillsSelected[id] = 1 : 
+            delete newBillsSelected[id];
 
-        // If the number of buttons selected is 0, hide the buttons.
-        } else {
-            delete newBillsSelected[id]
-            this.setState({
-                billsSelected: newBillsSelected,
-                checked: newChecked
-            })
-        }
+        // Setting new state.
+        this.setState({
+            billsSelected: newBillsSelected,
+            checked: newChecked
+        })
     }
 
     // Called once the 'check-all' checkbox has been checked.
@@ -114,7 +105,7 @@ export default class Approvals extends React.Component {
             newChecked[key] = event.target.checked
         ));
 
-        // Set new state.
+        // Setting the new state.
         if (event.target.checked && Object.keys(this.state.bills).length) {
             this.setState({
                 billsSelected: this.state.checked,
@@ -133,12 +124,31 @@ export default class Approvals extends React.Component {
         // New bills.
         var newBills = JSON.parse(JSON.stringify(this.state.bills));
         var newChecked = JSON.parse(JSON.stringify(this.state.checked));
+        console.log(type);
+
         // Iterating through the bills and approving/rejecting those who are selected.
         var keys = Object.keys(this.state.billsSelected);
+
+        // Send an email if the bills are being moved to processing.
+        if (type === "PROCESSING") {
+            // Refresh the selected bills.
+            await axios({
+                url: `${window._env_.BACKEND_BASE_URL}api/send_email/`,
+                method: 'post',
+                headers: {
+                    Authorization: `Token ${this.state.user}`
+                },
+                data: {
+                    "reports": Object.keys(this.state.billsSelected).map(Number)
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
+
         for (var i = 0; i < keys.length; i++) {
             // Change [id]'s status to the type given.
             var id = keys[i];
-            // Changing the bill's type and its render effects.
             try {
                 await axios.patch(`${window._env_.BACKEND_BASE_URL}api/usage/${id}/?status=${type}&approval=test`, null, {
                     headers: {
@@ -162,7 +172,8 @@ export default class Approvals extends React.Component {
     }
 
     // Refresh the list of bills. 
-    async handleRefresh(event) {
+    async handleResubmit(event) {
+        // Refresh the selected bills.
         await axios({
             url: `${window._env_.BACKEND_BASE_URL}api/usage/agent/resubmit/`,
             method: 'post',
@@ -174,6 +185,20 @@ export default class Approvals extends React.Component {
             }
         }).catch((err) => {
             console.log(err);
+        });
+
+        // Changing the new checked state.
+        var newChecked = JSON.parse(JSON.stringify(this.state.checked));
+
+        // Iterate through the keys and change them all to true/false.
+        Object.keys(this.state.checked).map((key) => (
+            newChecked[key] = false
+        ));
+
+        // Unselect the bills.
+        this.setState({
+            billsSelected: {},
+            checked: newChecked
         });
     }
 
@@ -193,31 +218,36 @@ export default class Approvals extends React.Component {
 
     render() {
         // Approve button.
-        let approveButton =
+        let approveBtn =
         <Button
             color="primary"
             variant="contained"
-            id="approveButton"
+            id="approveBtn"
             disabled={!Object.keys(this.state.billsSelected).length}
             onClick={(e) => this.handleBill("PROCESSING", e)}>
             Approve
         </Button>
 
         // Reject button.
-        let rejectButton =
+        let rejectBtn =
         <Button
             color="secondary"
             variant="contained"
-            id="rejectButton"
+            id="rejectBtn"
             disabled={!Object.keys(this.state.billsSelected).length}
             onClick={(e) => this.handleBill("UNUSABLE", e)}>
             Reject
         </Button>
 
-        let refreshButton = 
-        <IconButton color="primary" variant="contained" id="refreshButton" onClick={this.handleRefresh}>
-            <RefreshIcon/>
-        </IconButton>
+        // Refresh button.
+        let resubmitBtn = 
+        <Button color="primary" 
+            variant="contained"
+            id="resubmitBtn"
+            disabled={!Object.keys(this.state.billsSelected).length}
+            onClick={this.handleResubmit}>
+            Resubmit
+        </Button>
 
         return (
             <div className="approvalPage">
@@ -233,7 +263,7 @@ export default class Approvals extends React.Component {
                                     <TableCell align="justify"> </TableCell>
                                     <TableCell align="justify"> </TableCell>
                                     <TableCell align="justify"> </TableCell>
-                                    <TableCell align="right"> {refreshButton} {rejectButton} {approveButton} </TableCell>
+                                    <TableCell align="right"> {resubmitBtn} {rejectBtn} {approveBtn} </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableHead>
@@ -269,7 +299,7 @@ export default class Approvals extends React.Component {
                             </TableBody>
                         </Table>
                         <TablePagination
-                            rowsPerPageOptions={[7]}
+                            rowsPerPageOptions={[5, 7, 10]}
                             component="div"
                             count={Object.keys(this.state.bills).length}
                             rowsPerPage={this.state.rowsPerPage}

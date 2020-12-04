@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import FilterModal from './FilterModal';
-import ArrowDropDownBtn from './ArrowDropDownBtn';
+import ArrowDropDownBtn from '../../components/ArrowDropDownBtn';
 import { sortCost, sortMonth, sortYear, sortStations } from '../../functions/Sort';
 import { addKeys } from '../../functions/Bills';
 import axios from 'axios'
@@ -22,8 +22,8 @@ export default class Home extends React.Component {
             bills: [],
             page: 0,
             rowsPerPage: 7,
-            previousCategory: "",
             user: "",
+            previousCategory: "",
             categorySelected: {
                 "audit_status": "desc",
                 "bill_transit": "desc",
@@ -41,7 +41,7 @@ export default class Home extends React.Component {
 
     async componentDidMount() {
         // Axios call for bills.
-        var user = localStorage.getItem('user');
+        var user = sessionStorage.getItem('user');
         try {
             await axios.get(`${window._env_.BACKEND_BASE_URL}api/usage/`, {
             headers: {
@@ -72,6 +72,8 @@ export default class Home extends React.Component {
         updatedCategory[category] = sort;
 
         // Determining which category to sort on.
+        // Specific cases (i.e. "stations", "month", etc.) handle sorting not covered by the backend.
+        // Default case will call the sorting API.
         switch(category) {
             case "stations":
                 sortedBills = sortStations(this.state.bills, sort);
@@ -173,28 +175,28 @@ export default class Home extends React.Component {
                 <TableContainer component={Paper} key="homeTable" id="tableContainer">
                 <Table aria-label="simple table">
                 <TableHead>
-                    <TableRow id="header">
-                        <TableCell>
+                    <TableRow >
+                        <TableCell id="header">
                             Radio Station
                             <ArrowDropDownBtn category={"stations"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["stations"]}/>
                         </TableCell>
-                        <TableCell>
+                        <TableCell id="header">
                             Month
                             <ArrowDropDownBtn category={"month"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["month"]}/>
                         </TableCell>
-                        <TableCell>
+                        <TableCell id="header">
                             Year
                             <ArrowDropDownBtn category={"year"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["year"]}/>
                         </TableCell>
-                        <TableCell>
+                        <TableCell id="header">
                             Bandwidth Usage
                             <ArrowDropDownBtn category={"bill_transit"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["bill_transit"]}/>
                         </TableCell>
-                        <TableCell>
+                        <TableCell id="header">
                             Cost
                             <ArrowDropDownBtn category={"cost"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["cost"]}/>
                         </TableCell>
-                        <TableCell>
+                        <TableCell id="header">
                             Audit Status
                             <ArrowDropDownBtn category={"audit_status"} sortCategory={this.sortCategory} initSort={this.state.categorySelected["audit_status"]}/>
                         </TableCell>
@@ -216,7 +218,7 @@ export default class Home extends React.Component {
                     </TableBody>
                 </Table>
                 <TablePagination
-                    rowsPerPageOptions={[7]}
+                    rowsPerPageOptions={[5, 7, 10]}
                     component="div"
                     count={Object.keys(this.state.bills).length}
                     rowsPerPage={this.state.rowsPerPage}
