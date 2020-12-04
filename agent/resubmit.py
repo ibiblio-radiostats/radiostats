@@ -13,6 +13,7 @@ from tabulate import tabulate_single
 
 @post('/resubmit')
 def index():
+    reports = json.loads(request.json)
     for report in request.json:
         q.put(report)
     return { "status": "ok" }

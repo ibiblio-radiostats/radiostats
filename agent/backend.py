@@ -28,35 +28,9 @@ def get_sid_from_name(name):
 
 	return -1
 
-def report_already_present(station, yearmonth):
-	url = backend_api_root + 'api/usage/agent/reports/'
-	r = requests.get(url, headers={'Authorization': AGENT_KEY})
-	reports = r.json()
-
-	for report in reports:
-		bill_period = dateutil.parser.parse(report['bill_start'])
-		if report['stations'].lower() == station.lower() and yearmonth == (bill_period.year, bill_period.month):
-			return True
-
-	return False
-
-def resend_report(id, report):
-	data = {'report_dtm': datetime.utcnow(), 'bill_transit': int(report.usage)}
-	url = backend_api_root + f'api/usage/agent/resubmit/{id}/'
-	requests.patch(url, data=data, headers={'Authorization': AGENT_KEY})
-
-def send_report(report):
-	print(f'Submitting report: {report.station}, {report.yearmonth}')
-	sid = get_sid_from_name(report.station)
-	if sid == -1:
-		logger.warning(f'Could not find sid for station {report.station}')
-		return
-
-	bill_start = date(report.yearmonth[0], report.yearmonth[1], 1).strftime("%Y-%m-%dT00:00:00Z")
-	lastday = monthrange(report.yearmonth[0], report.yearmonth[1])[1]
-	bill_end = date(report.yearmonth[0], report.yearmonth[1], lastday).strftime("%Y-%m-%dT23:59:59Z")
-
-	workbook = xlsxwriter.Workbook(f'{report.station}_{report.yearmonth[0]}-{report.yearmonth[1]}.xlsx')
+def write_xlsx(report):
+	filepath = f'{report.station}_{report.yearmonth[0]}-{report.yearmonth[1]}.xlsx'
+	workbook = xlsxwriter.Workbook(filepath)
 	money = workbook.add_format({'num_format': '$###0.00'})
 	worksheet = workbook.add_worksheet()
 
@@ -75,13 +49,43 @@ def send_report(report):
 
 	worksheet.write(row, 3, f'=SUM(C2:C{len(report.mounts) + 1})', money)
 	workbook.close()
+	return filepath
+
+def report_already_present(station, yearmonth):
+	url = backend_api_root + 'api/usage/agent/reports/'
+	r = requests.get(url, headers={'Authorization': AGENT_KEY})
+	reports = r.json()
+
+	for report in reports:
+		bill_period = dateutil.parser.parse(report['bill_start'])
+		if report['stations'].lower() == station.lower() and yearmonth == (bill_period.year, bill_period.month):
+			return True
+
+	return False
+
+def resend_report(id, report):
+	xlsx = write_xlsx(report)
+
+	data = {'report_dtm': datetime.utcnow(), 'bill_transit': int(report.usage)}
+	files = {'report': open(xlsx, 'rb')}
+	url = backend_api_root + f'api/usage/agent/resubmit/{id}/'
+	requests.patch(url, data=data, files=files, headers={'Authorization': AGENT_KEY})
+
+def send_report(report):
+	print(f'Submitting report: {report.station}, {report.yearmonth}')
+	sid = get_sid_from_name(report.station)
+	if sid == -1:
+		logger.warning(f'Could not find sid for station {report.station}')
+		return
+
+	bill_start = date(report.yearmonth[0], report.yearmonth[1], 1).strftime("%Y-%m-%dT00:00:00Z")
+	lastday = monthrange(report.yearmonth[0], report.yearmonth[1])[1]
+	bill_end = date(report.yearmonth[0], report.yearmonth[1], lastday).strftime("%Y-%m-%dT23:59:59Z")
+
+	xlsx = write_xlsx(report)
 
 	data = {'report_dtm': datetime.utcnow(), 'bill_start': bill_start, 'bill_end': bill_end, 'bill_transit': report.usage, 'cost_mult': round(cost_mult, 10), 'sid': sid}
-	files = {'report': open(f'{report.station}_{report.yearmonth[0]}-{report.yearmonth[1]}.xlsx', 'rb')}
+	files = {'report': open(xlsx, 'rb')}
 	url = backend_api_root + 'api/usage/agent/submit/'
-	response = requests.post(url, data=data, files=files, headers={'Authorization': AGENT_KEY})
-	if response.status_code != 200:
-		print('Post failed:')
-		print(f'Station: {report.station}, Yearmonth: {report.yearmonth}, Usage: {report.usage}, Mounts: {report.mounts}')
-		print(response.content)
-	os.remove(f'{report.station}_{report.yearmonth[0]}-{report.yearmonth[1]}.xlsx')
+	requests.post(url, data=data, files=files, headers={'Authorization': AGENT_KEY})
+	os.remove(xlsx)

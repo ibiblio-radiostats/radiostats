@@ -55,7 +55,7 @@ def tabulate_single(id, station, yearmonth):
 			# Only process files that correspond to months that have fully passed
 			if is_month_passed(today, fileyearmonth):
 				filepath = os.path.join(path, file)
-				months[fileyearmonth].append(filepath)
+				result_files.append(filepath)
 
 		df = pd.DataFrame(columns = ['bandwidth', 'listeners', 'time'])
 		for csv in result_files:
@@ -65,7 +65,7 @@ def tabulate_single(id, station, yearmonth):
 	# Items in report.mounts are tuples of the form (mount, mount_usage)
 	# Usage here is measured in Mbps, so divide by 1024^2
 	report.usage = round(sum([mount[1] for mount in report.mounts]), 10)
-	resend_report(report)
+	resend_report(id, report)
 
 def tabulate():
 	today = datetime.utcnow().date()
