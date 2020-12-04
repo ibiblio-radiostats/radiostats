@@ -107,6 +107,9 @@ def tabulate():
 
 		months_to_process = [month for month in months if months[month] != months.default_factory()]
 		for month in months_to_process:
+			# Don't regenerate existing reports
+			if report_already_present(station, month): continue
+
 			df = pd.DataFrame(columns = ['bandwidth', 'listeners', 'time'])
 			for csv in months[month]:
 				df = df.append(pd.read_csv(csv), ignore_index = True)
