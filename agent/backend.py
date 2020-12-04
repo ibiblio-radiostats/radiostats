@@ -29,7 +29,7 @@ def get_sid_from_name(name):
 	return -1
 
 def write_xlsx(report):
-	filepath = f'{report.station}_{report.yearmonth[0]}-{report.yearmonth[1]}.xlsx'
+	filepath = f'{report.station}_{report.yearmonth[0]}-{report.yearmonth[1]}_{datetime.utcnow().isoformat()}.xlsx'
 	workbook = xlsxwriter.Workbook(filepath)
 	money = workbook.add_format({'num_format': '$###0.00'})
 	worksheet = workbook.add_worksheet()
@@ -73,7 +73,6 @@ def resend_report(id, report):
 	os.remove(xlsx)
 
 def send_report(report):
-	print(f'Submitting report: {report.station}, {report.yearmonth}')
 	sid = get_sid_from_name(report.station)
 	if sid == -1:
 		logger.warning(f'Could not find sid for station {report.station}')
