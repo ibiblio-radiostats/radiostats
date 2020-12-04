@@ -63,7 +63,6 @@ def tabulate_single(id, station, yearmonth):
 		report.mounts.append((mount, df['bandwidth'].quantile(.95) / 1048576))
 
 	# Items in report.mounts are tuples of the form (mount, mount_usage)
-	# Usage here is measured in Mbps, so divide by 1024^2
 	report.usage = round(sum([mount[1] for mount in report.mounts]), 10)
 	resend_report(id, report)
 
@@ -135,7 +134,6 @@ def tabulate():
 	# Calculate total usage for each station for each month
 	for report in reports.values():
 		# Items in report.mounts are tuples of the form (mount, mount_usage)
-		# Usage here is measured in Mbps, so divide by 1024^2
 		report.usage = round(sum([mount[1] for mount in report.mounts]), 10)
 
 	for report in reports.values():
