@@ -6,3 +6,4 @@ class Report:
 		self.station = station
 		self.yearmonth = yearmonth
 		self.usage = usage
+		self.mounts = []
