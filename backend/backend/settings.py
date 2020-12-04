@@ -155,7 +155,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'sils_reports')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'host_url'
-EMAIL_PORT = 000
-EMAIL_HOST_USER = 'some_email'
-EMAIL_HOST_PASSWORD = 'some_password'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'host_email'
+EMAIL_HOST_PASSWORD = 'host_password'

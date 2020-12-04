@@ -46,7 +46,7 @@ urlpatterns = [
     path('api/usage/agent/resubmit/', AgentResubmit.as_view(), name='agent_resubmit'),
     path('api/usage/agent/reports/', AgentReportQuery.as_view(), name='agent_report_query'),
     path('api/usage/agent/stations/', AgentStationQuery.as_view(), name='agent_station_query'),
-    path('api/upload/',EmailReportView.as_view(), name='report_upload'),
+    path('api/send_mail/',EmailReportView.as_view(), name='send_mail'),
     path('api/',include(router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
