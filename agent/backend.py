@@ -68,8 +68,9 @@ def resend_report(id, report):
 
 	data = {'report_dtm': datetime.utcnow(), 'bill_transit': int(report.usage)}
 	files = {'report': open(xlsx, 'rb')}
-	url = backend_api_root + f'api/usage/agent/resubmit/{id}/'
+	url = backend_api_root + f'api/usage/agent/submit/{id}/'
 	requests.patch(url, data=data, files=files, headers={'Authorization': AGENT_KEY})
+	os.remove(xlsx)
 
 def send_report(report):
 	print(f'Submitting report: {report.station}, {report.yearmonth}')
