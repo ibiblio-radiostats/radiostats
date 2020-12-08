@@ -156,7 +156,7 @@ describe("removing all bills", () => {
         }
 
         wrapper.find("#checkAllBox").simulate("change", event)
-        wrapper.find("#rejectButton").simulate("click")
+        wrapper.find("#rejectBtn").simulate("click")
     })
 })
 
@@ -179,7 +179,7 @@ describe("dummy button clicks", () => {
                 }
             }
         })
-        wrapper.find("#approveButton").simulate('click')
+        wrapper.find("#approveBtn").simulate('click')
         expect(wrapper.find(TableRow).length).toBe(3) 
     })
 
@@ -201,7 +201,7 @@ describe("dummy button clicks", () => {
                 }
             }
         })
-        wrapper.find("#rejectButton").simulate('click')
+        wrapper.find("#rejectBtn").simulate('click')
         expect(wrapper.find(TableRow).length).toBe(3) 
     })
 })
