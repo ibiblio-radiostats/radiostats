@@ -61,6 +61,36 @@ cd .\frontend
 npm install
 npm run start
 ```
+
+## 3.) ibiblio Admin User creation
+
+The steps below will highlight how to create radio station users in our application. the endpoint to get to admin page is:
+https://___/backend/admin
+
+1. Create the ibiblio admin superuser if one has not been created.
+
+```powershell
+cd \path\to\repository-root
+.\Scripts\activate
+cd .\backend
+python .\manage.py createsuper
+```
+you will then be prompted to fill out the username, email, and password for the admin
+
+2. Create Station if it does not exist in system
+
+![station_creation](station_creation.gif)
+
+3. Create User Profile
+
+![user_creation](user_creation.gif)
+
+3. Create UserInfo
+
+![userinfo_creation](userinfo_creation.gif)
+
+
+
 __Mac/Linux__
 ```sh
 cd /path/to/repository-root
@@ -134,8 +164,8 @@ __Mac/Linux Test Coverage__
 ```sh
 cd /path/to/repository-root
 source bin/activate
-cd .\backend
-coverage run --source='.' .\manage.py test backend.usage backend.users
+cd ./backend
+coverage run --source='.' ./manage.py test backend.usage backend.users
 coverage html
 ```
 

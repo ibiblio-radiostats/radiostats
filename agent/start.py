@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import query
+import resubmit
 import tabulate
 import time
 
@@ -23,6 +24,9 @@ query.setup_logger()
 sched = BlockingScheduler()
 sched.add_job(update_job, 'cron', minute='*/5')
 sched.add_job(tabulate_job, 'cron', minute='*/5')
+
+logger.info("Starting resubmission listening endpoint")
+resubmit.start_resubmit_listener()
 
 logger.info("Starting scheduled Icecast stats query agent")
 sched.start()

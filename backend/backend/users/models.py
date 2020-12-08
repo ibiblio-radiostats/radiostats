@@ -21,3 +21,7 @@ class UserInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     sid = models.ForeignKey(Station,on_delete=models.CASCADE)
     role = models.CharField(max_length=100,choices=USER_CHOICES,default=STATION_USER)
+    
+    def __str__(self):
+       return str(self.user)
+

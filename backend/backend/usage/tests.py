@@ -38,7 +38,7 @@ class TestUsage(APITestCase):
             bill_start = today,
             bill_end = today,
             audit_status = 'PROCESSING',
-            bill_transit = 3,
+            bill_transit = 3.0,
             cost_mult = 2.3,
             sid = station,
         )
@@ -48,7 +48,7 @@ class TestUsage(APITestCase):
             bill_start = today,
             bill_end = today,
             audit_status = 'PROCESSING',
-            bill_transit = 3,
+            bill_transit = 3.0,
             cost_mult = 2.4,
             sid = station2,
         )
@@ -58,7 +58,7 @@ class TestUsage(APITestCase):
             bill_start = today,
             bill_end = today,
             audit_status = 'PROCESSING',
-            bill_transit = 3,
+            bill_transit = 3.0,
             cost_mult = 2.5,
             sid = station2,
         )
@@ -68,7 +68,7 @@ class TestUsage(APITestCase):
             bill_start = today,
             bill_end = today,
             audit_status = 'PENDING_APPROVAL',
-            bill_transit = 3,
+            bill_transit = 3.0,
             cost_mult = 2.3,
             sid = station,
         )
@@ -78,7 +78,7 @@ class TestUsage(APITestCase):
             bill_start = month,
             bill_end = month,
             audit_status = 'PROCESSING',
-            bill_transit = 6,
+            bill_transit = 6.0,
             cost_mult = 3.5,
             sid = station2,
         )       
@@ -120,10 +120,11 @@ class TestUsage(APITestCase):
         "bill_start": date,
         "bill_end": date,
         "audit_status": "PROCESSING",
-        "bill_transit": 3,
-        "cost_mult": "2.3000",
+        "bill_transit": "3.0000000000",
+        "cost_mult": "2.3000000000",
         "sid": 1,
-        "stations": "WCPE"
+        "stations": "WCPE",
+        'report': None
         }])
         self.client.credentials()
 
@@ -186,10 +187,10 @@ class TestUsage(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.admin.token.key)
         response = self.client.get('/api/usage/?order_by=cost_mult')
         res_lst = [cost['cost_mult'] for cost in json.loads(response.content)]
-        self.assertEquals(['2.3000','2.4000','2.5000','3.5000'],res_lst)
+        self.assertEquals(['2.3000000000','2.4000000000','2.5000000000','3.5000000000'],res_lst)
         response = self.client.get('/api/usage/?order_by=cost_mult:desc')
         res_lst = [cost['cost_mult'] for cost in json.loads(response.content)]
-        self.assertEquals(['3.5000','2.5000','2.4000','2.3000'],res_lst)
+        self.assertEquals(['3.5000000000','2.5000000000','2.4000000000','2.3000000000'],res_lst)
 
     def test_audit(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.admin.token.key)

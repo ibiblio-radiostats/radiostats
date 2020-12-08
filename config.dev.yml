@@ -17,8 +17,9 @@ backend:
     # Path is relative to BASE_DIR - see settings.py in backend
     name: 'db.sqlite3'
 agent:
+  host: '127.0.0.1'
   debug: true
-  dev: true
+  port: 9000
   icecast:
     hostname: 'fake.icecast.example.org'
     port: 8000
