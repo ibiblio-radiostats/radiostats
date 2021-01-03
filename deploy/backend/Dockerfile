@@ -14,6 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend /app
 
 RUN groupadd -r django && useradd --no-log-init -r -g django django
+RUN mkdir -p sils_reports
+RUN chown -R django:django sils_reports
 COPY deploy/backend/start.sh ./
 RUN chmod +x ./start.sh
 CMD ./start.sh
