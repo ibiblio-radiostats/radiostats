@@ -20,4 +20,4 @@ DJANGO_SUPERUSER_USERNAME=admin DJANGO_SUPERUSER_PASSWORD=admin DJANGO_SUPERUSER
 # Set up mod_wsgi to use our desired port of choice
 export BACKEND_PORT=$(yq r ${CONFIG_PATH} backend.port)
 
-mod_wsgi-express start-server --port=$BACKEND_PORT --url-alias /static /static/ --application-type module --user django --group django backend.wsgi --log-to-terminal
+mod_wsgi-express start-server --port=$BACKEND_PORT --url-alias /static /static/ --application-type module --user django --group django --locale C.UTF-8 --log-to-terminal backend.wsgi
