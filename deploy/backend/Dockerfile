@@ -17,5 +17,6 @@ RUN groupadd -r django && useradd --no-log-init -r -g django django
 RUN mkdir -p sils_reports
 RUN chown -R django:django sils_reports
 COPY deploy/backend/start.sh ./
+COPY deploy/backend/start_checks.py ./
 RUN chmod +x ./start.sh
 CMD ./start.sh
