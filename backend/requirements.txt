@@ -27,7 +27,7 @@ iniconfig==1.1.1
 isort==5.5.4
 itypes==1.2.0
 jdcal==1.4.1
-Jinja2==2.11.2
+Jinja2==2.11.3
 lazy-object-proxy==1.4.3
 loguru==0.5.3
 lxml==4.6.2
