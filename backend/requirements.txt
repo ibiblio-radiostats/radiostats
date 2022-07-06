@@ -30,7 +30,7 @@ jdcal==1.4.1
 Jinja2==2.11.2
 lazy-object-proxy==1.4.3
 loguru==0.5.3
-lxml==4.6.2
+lxml==4.9.1
 MarkupSafe==1.1.1
 mccabe==0.6.1
 mod-wsgi==4.7.1
