@@ -1,6 +1,6 @@
 APScheduler==3.6.3
 bottle==0.12.19
-certifi==2020.11.8
+certifi==2022.12.7
 chardet==3.0.4
 idna==2.10
 loguru==0.5.3
